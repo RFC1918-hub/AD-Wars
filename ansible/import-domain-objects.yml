@@ -1,0 +1,52 @@
+---
+# -----------------------------------------
+# load config data
+- import_playbook: data.yml
+  vars:
+    data_path: "./config/data/"
+
+# -----------------------------------------
+# Import domain objects
+- name: Importing and creating domain objects
+  hosts: domain_controllers
+  roles:
+    - { role: 'ad/dc_data', tags: 'dc_data' }
+  vars:
+    hostname: "{{lab.hosts[dict_key].hostname}}"
+    domain: "{{lab.hosts[dict_key].domain}}"
+    domain_username: "{{domain}}\\Administrator"
+    domain_password: "{{lab.domains[domain].domain_password}}"
+    domain_server: "{{lab.hosts[dict_key].hostname}}.{{domain}}"
+    ad_ou: "{{lab.domains[lab.hosts[dict_key].domain].organisation_units}}"
+    ad_users: "{{lab.domains[lab.hosts[dict_key].domain].users}}"
+    ad_groups: "{{lab.domains[lab.hosts[dict_key].domain].groups}}"
+
+# -----------------------------------------
+# Assign group membership of local groups
+- name: Adding domain users to local groups
+  hosts: windows
+  roles:
+    - { role: "settings/local_groups", tags: 'local_groups'}
+  vars:
+    local_groups: "{{lab.hosts[dict_key].local_groups}}"
+
+# -----------------------------------------
+# Assigning group membership of multi-domain groups
+- name: Adding multi-domain group membership
+  hosts: domain_controllers
+  roles:
+  - { role: 'ad/dc_multi_groups', tags: 'dc_multi_groups'}
+  vars:
+    domain: "{{lab.hosts[dict_key].domain}}"
+    domain_username: "{{domain}}\\Administrator"
+    domain_password: "{{lab.domains[domain].domain_password}}"
+    domain_groups_members: "{{lab.domains[domain].multi_domain_groups_member}}"
+
+# -----------------------------------------
+# Setting domain ACLs
+- name: Setting domain ACLs from data
+  hosts: domain_controllers
+  roles:
+  - { role: 'ad/dc_acls', tags: 'dc_acls'}
+  vars:
+    ad_acls: "{{lab.domains[lab.hosts[dict_key].domain].acls}}"

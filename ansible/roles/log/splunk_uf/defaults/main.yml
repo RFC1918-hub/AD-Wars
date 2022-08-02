@@ -1,0 +1,7 @@
+# -----------------------------------------
+# Splunk app variables
+TA_microsoft_sysmon_local_path: "C:\\Program Files\\SplunkUniversalForwarder\\etc\\apps\\TA-microsoft-sysmon\\local"
+TA_powershell_transcript_local_path: "C:\\Program Files\\SplunkUniversalForwarder\\etc\\apps\\TA-powershell_transcript\\local"
+TA_windows_local_path: "C:\\Program Files\\SplunkUniversalForwarder\\etc\\apps\\Splunk_TA_windows\\local"
+
+splunk_server_ip: 192.168.56.100

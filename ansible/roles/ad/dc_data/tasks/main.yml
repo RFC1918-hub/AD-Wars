@@ -1,0 +1,18 @@
+# -----------------------------------------
+- name: "Rebooting and waiting for the AD system to restart"
+  win_reboot:
+    test_command: "Get-ADUser -Identity Administrator -Properties *"
+
+# Creating domain OU
+- name: Creating organisation units
+  import_tasks: ou.yml
+
+# -----------------------------------------
+# Creating domain groups
+- name: Creating groups
+  import_tasks: groups.yml
+
+# -----------------------------------------
+# Creating domain users
+- name: Creating users
+  import_tasks: users.yml

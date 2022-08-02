@@ -1,0 +1,52 @@
+<user-mapping>
+    <authorize username="{{guacamole_user}}" password="{{guacamole_password}}">
+        <connection name="logger">
+            <protocol>ssh</protocol>
+            <param name="hostname">192.168.56.100</param>
+            <param name="port">22</param>
+            <param name="username">{{ansible_user}}</param>
+            <param name="password">{{ansible_password}}</param>
+        </connection>
+
+        <connection name="DC01 - republic-dc - Administrator">
+            <protocol>rdp</protocol>
+            <param name="hostname">192.168.56.10</param>
+            <param name="port">3389</param>
+            <param name="username">Administrator</param>
+            <param name="password">8dCT-DJjgScp</param>
+            <param name="security">nla</param>
+            <param name="ignore-cert">true</param>
+        </connection>
+
+        <connection name="DC02 - security-dc - Administrator">
+            <protocol>rdp</protocol>
+            <param name="hostname">192.168.56.11</param>
+            <param name="port">3389</param>
+            <param name="username">Administrator</param>
+            <param name="password">NgtI75cKV+Pu</param>
+            <param name="security">nla</param>
+            <param name="ignore-cert">true</param>
+        </connection>
+
+        <connection name="SRV02 - jedi-archives - Administrator">
+            <protocol>rdp</protocol>
+            <param name="hostname">192.168.56.22</param>
+            <param name="port">3389</param>
+            <param name="username">Administrator</param>
+            <param name="password">Wju#2dcj</param>
+            <param name="security">nla</param>
+            <param name="ignore-cert">true</param>
+        </connection>
+
+        <connection name="WIN02 - dooku-win10 - Administrator">
+            <protocol>rdp</protocol>
+            <param name="hostname">192.168.56.32</param>
+            <param name="port">3389</param>
+            <param name="username">Administrator</param>
+            <param name="password">dDju2@3c8du</param>
+            <param name="security">nla</param>
+            <param name="ignore-cert">true</param>
+        </connection>
+
+    </authorize>
+</user-mapping>

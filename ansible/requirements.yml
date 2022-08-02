@@ -1,0 +1,6 @@
+---
+collections:
+  # Install a collection from Ansible Galaxy.
+  - ansible.windows
+  - community.general
+  - community.windows

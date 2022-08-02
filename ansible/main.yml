@@ -1,0 +1,28 @@
+---
+# -----------------------------------------
+# Installing necessary utilities
+- import_playbook: install-utilities.yml
+
+# -----------------------------------------
+# Configuring AD domain
+- import_playbook: configure-domain.yml
+
+# -----------------------------------------
+# Configuring logger host 
+- import_playbook: configure-logger.yml 
+
+# -----------------------------------------
+# Configuring servers
+- import_playbook: configure-servers.yml
+
+# -----------------------------------------
+# Import domain objects
+- import_playbook: import-domain-objects.yml 
+
+# -----------------------------------------
+# Configure vulnerabilities
+- import_playbook: vulnerabilities.yml
+
+# -----------------------------------------
+# Configuring logging and splunk forwarders
+- import_playbook: security-tools.yml

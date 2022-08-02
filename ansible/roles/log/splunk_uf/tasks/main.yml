@@ -1,0 +1,97 @@
+---
+# -----------------------------------------
+# Installing and configuring Splunk
+
+- name: Ensuring ansible folder exist
+  win_file: 
+    path: c:\ansible\
+    state: directory
+
+- name: Downloading Splunk UF onto machine
+  ansible.windows.win_powershell:
+    script: |
+      $splunk_uf = "c:\ansible\splunk-uf.msi"
+
+      if (Test-Path $splunk_uf) {
+          $Ansible.Changed = $false
+      } else {
+          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+          $web_request = Invoke-WebRequest -Uri "https://www.splunk.com/en_us/download/universal-forwarder.html" -UseBasicParsing
+          $web_request.Content -match 'data-link="(https:\/\/download\.splunk\.com\/products\/universalforwarder\/releases\/.*\/windows\/splunkforwarder-.*-x64-release\.msi)"'
+          $uf_download_link = $matches[1]
+          Invoke-WebRequest -Uri $uf_download_link -OutFile $splunk_uf
+          $Ansible.Changed = $true
+      }
+  register: splunk_uf_download
+
+- name: Installing Splunk UF
+  win_package:
+    path: c:\ansible\splunk-uf.msi
+    arguments: RECEIVING_INDEXER="{{splunk_server_ip}}:9997" WINEVENTLOG_SEC_ENABLE=0 WINEVENTLOG_SYS_ENABLE=0 WINEVENTLOG_APP_ENABLE=0 AGREETOLICENSE=Yes SERVICESTARTTYPE=AUTO LAUNCHSPLUNK=1 SPLUNKPASSWORD={{splunk_admin_password}} /quiet
+  # when: if splunk server does not exist
+
+- name: Copying Splunk app to remote host
+  win_copy:
+    src: ../../logger_setup/files/splunk_server
+    dest: c:\ansible\
+  register: splunk_uf_apps
+
+- name: Getting list of all app files on remote host
+  win_find:
+    paths: c:\ansible\splunk_server\
+  register: splunk_uf_app_list
+
+- name: Installing Splunk apps
+  ansible.windows.win_powershell:
+    script:
+      Start-Process -FilePath "C:\Program Files\SplunkUniversalForwarder\bin\splunk.exe" -ArgumentList "install app {{item.path}} -auth admin:{{splunk_admin_password}}" -NoNewWindow
+  with_items: "{{splunk_uf_app_list.files}}"
+  when: splunk_uf_apps.changed
+
+# -----------------------------------------
+# Configuring sysmon app
+- name: Creating local directory in sysmon app
+  win_file:
+    path: "{{TA_microsoft_sysmon_local_path}}"
+    state: directory
+
+- name: Configuring Splunk sysmon inputs
+  win_copy:
+    src: ./files/TA_microsoft_sysmon_inputs.conf
+    dest: "{{TA_microsoft_sysmon_local_path}}\\inputs.conf"
+
+# -----------------------------------------
+# Configuring powershell app
+- name: Creating local directory in powershell app
+  win_file:
+    path: "{{TA_powershell_transcript_local_path}}"
+    state: directory
+
+- name: Configuring Splunk powershell inputs
+  win_copy:
+    src: ./files/TA_powershell_transcript_inputs.conf
+    dest: "{{TA_powershell_transcript_local_path}}\\inputs.conf"
+
+# -----------------------------------------
+# Configuring windows app
+- name: Creating local directory in windows app
+  win_file:
+    path: "{{TA_windows_local_path}}"
+    state: directory
+
+- name: Configuring Splunk windows inputs
+  win_copy:
+    src: ./files/TA_windows_inputs.conf
+    dest: "{{TA_windows_local_path}}\\inputs.conf"
+
+# -----------------------------------------
+# Clear all logs of ansible deployment
+- name: Clearing all Windows logs
+  ansible.windows.win_powershell:
+    script: Get-EventLog -LogName * | ForEach { Clear-EventLog $_.Log }
+
+# -----------------------------------------
+# Restarting splunk forwarder
+- name: Restarting Splunk forwarder
+  win_command:
+    "\"C:\\Program Files\\SplunkUniversalForwarder\\bin\\splunk.exe\" restart"

@@ -1,0 +1,28 @@
+---
+# load data
+- import_playbook: data.yml
+  vars:
+    data_path: "./config/data/"
+
+# -----------------------------------------
+# Configure defender settings
+- name: Enabling windows defender
+  hosts: domain_controllers, desktops
+  roles:
+    - { role: 'settings/windows_defender', tags: 'windows_defender', windows_defender_status: 'on' }
+
+- name: Disabling windows defender
+  hosts: srv02
+  roles:
+    - { role: 'settings/windows_defender', tags: 'windows_defender', windows_defender_status: 'off' }
+
+# -----------------------------------------
+# Configure security logging and splunk forwarders
+- name: Confuring security logging and splunk forwarders
+  hosts: windows
+  roles:
+    - {role: 'log/sysmon', tags: 'sysmon'}
+    - {role: 'log/powershell', tags: 'powershell'}
+    - {role: 'log/splunk_uf', tags: 'splunk_uf'}
+  vars:
+    splunk_admin_password: "{{lab.hosts['logger'].splunk_admin_password}}"

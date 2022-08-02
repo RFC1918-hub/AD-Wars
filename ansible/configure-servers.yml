@@ -1,0 +1,13 @@
+---
+# -----------------------------------------
+# load config data
+- import_playbook: data.yml
+  vars:
+    data_path: "./config/data/"
+
+# -----------------------------------------
+# Configure IIS servers
+- name: Configuring IIS servers
+  hosts: srv02
+  roles:
+    - { role: 'server/iis', tags: 'iis'}

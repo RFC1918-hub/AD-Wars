@@ -1,0 +1,15 @@
+---
+# -----------------------------------------
+# Adding multi domain users to groups
+- name: "Adding a domain user/group from another domain in the multi-domain forest to a domain group : {{domain}}"
+  community.windows.win_domain_group_membership:
+    domain_username: "{{domain_username}}"
+    domain_password: "{{domain_password}}"
+    name: "{{item.key}}"
+    members: "{{ item.value }}"
+    state: Present
+  with_dict: "{{ domain_groups_members }}"
+  register: group_membership
+  until: "group_membership is not failed"
+  retries: 3
+  delay: 120

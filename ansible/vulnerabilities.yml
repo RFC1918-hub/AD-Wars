@@ -1,0 +1,10 @@
+---
+# -----------------------------------------
+# WIN02 password of adm_cdooku in pshistory
+- name: WinRM as c.dooku and running command containing password
+  hosts: win02
+  roles: 
+    - {role: 'vulnerabilities/adm_cdooku_scheduled_task', tags: 'adm_cdooku_scheduled_task'}
+  vars:
+    runas_user: "security\\c.dooku"
+    runas_password: "TwiceThePride07*"

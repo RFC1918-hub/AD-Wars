@@ -1,0 +1,39 @@
+---
+# -----------------------------------------
+# Installing and configuring Sysmon
+
+- name: Ensuring sysmon install directory exist
+  win_file: 
+    path: "{{sysmon_install_directory}}"
+    state: directory
+
+- name: Donwloading sysmon installation file
+  win_get_url:
+    url: "{{sysmon_download_url}}"
+    dest: "{{sysmon_install_directory}}\\sysmon.zip"
+
+- name: Unzipping sysmon installation file
+  win_unzip:
+    src: "{{sysmon_install_directory}}\\sysmon.zip"
+    dest: "{{sysmon_install_directory}}"
+
+- name: Copying sysmon config file to host
+  win_copy:
+    src: ./files/sysmonconfig-export.xml
+    dest: "{{sysmon_install_directory}}"
+  register: sysmon_config
+
+- name: Check if sysmon service exists
+  win_service:
+    name: sysmon64
+  register: sysmon_service
+
+- name: Installing sysmon config
+  win_command:
+    "{{sysmon_install_directory}}\\sysmon64.exe -accepteula -i {{sysmon_install_directory}}\\sysmonconfig-export.xml"
+  when: sysmon_service.exists == false
+
+- name: Updating sysmon config
+  win_command:
+    "{{sysmon_install_directory}}\\sysmon64.exe -accepteula -c {{sysmon_install_directory}}\\sysmonconfig-export.xml"
+  when: sysmon_config.changed

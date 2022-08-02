@@ -1,0 +1,13 @@
+---
+- name: Installing IIS
+  win_feature:
+    name: "Web-Server"
+    state: present
+    restart: yes
+    include_sub_features: yes
+    include_management_tools: yes
+
+- name: Copying web files to server
+  win_copy:
+    src: "files/"
+    dest: "C:\\inetpub\\wwwroot\\"

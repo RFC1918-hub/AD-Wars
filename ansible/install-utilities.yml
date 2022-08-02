@@ -1,0 +1,5 @@
+--- 
+- name: Installing necessary utilities
+  hosts: windows
+  roles: 
+    - {role: 'utilities', tags: 'utilities'}

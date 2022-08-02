@@ -1,0 +1,173 @@
+{
+    "lab" : {
+        "hosts" : {
+            "logger" : {
+                "hostname" : "logger",
+                "type" : "server",
+                "splunk_admin_password" : "QweuEw-12weD",
+                "guacamole_user" : "guacadmin",
+                "guacamole_password" : "Huyd2jd@uch"
+            },
+            "dc01" : {
+                "hostname" : "republic-dc",
+                "type" : "dc", 
+                "local_admin_password" : "8dCT-DJjgScp", 
+                "domain" : "republic.local",
+                "path" : "DC=republic,DC=local",
+                "local_groups" : {
+                    "Administrators" : [],
+                    "Remote Desktop Users" : []
+                }
+            },
+            "dc02" : {
+                "hostname" : "security-dc",
+                "type" : "dc", 
+                "local_admin_password" : "NgtI75cKV+Pu", 
+                "domain" : "security.republic.local",
+                "path" : "DC=security,DC=republic,DC=local",
+                "local_groups" : {
+                    "Administrators" : [],
+                    "Remote Desktop Users" : []
+                }
+            },
+            "srv02" : {
+                "hostname" : "jedi-archives",
+                "type" : "server", 
+                "local_admin_password" : "Wju#2dcj", 
+                "domain" : "security.republic.local",
+                "path" : "DC=security,DC=republic,DC=local",
+                "local_groups" : {
+                    "Administrators" : [],
+                    "Remote Desktop Users" : []
+                }
+            },
+            "win02" : {
+                "hostname" : "dooku-win10",
+                "type" : "desktop", 
+                "local_admin_password" : "dDju2@3c8du", 
+                "domain" : "security.republic.local",
+                "path" : "DC=security,DC=republic,DC=local",
+                "local_groups" : {
+                    "Administrators" : [
+                        "security\\adm_cdooku"
+                    ],
+                    "Remote Desktop Users" : [
+                        "security\\c.dooku"
+                    ],
+                    "Remote Management Users" : [
+                        "security\\c.dooku"
+                    ] 
+                }
+            }
+        },
+        "domains" : {
+            "republic.local" : {
+                "dc" : "dc01",
+                "domain_password" : "8dCT-DJjgScp",
+                "netbios_name" : "republic",
+                "organisation_units" : {},
+                "users" : {
+                    "s.palpatine" : {
+                        "firstname"   : "Sheev",
+                        "surname"     : "Palpatine",
+                        "password"    : "SithLord66!",
+                        "city"        : "-",
+                        "description" : "Supreme Chancellor",
+                        "groups"      : ["Domain Admins"],
+                        "path"        : "CN=Users,DC=republic,DC=local"
+                    }
+                },
+                "groups" : {
+                    "universal" : {},
+                    "global" : {},
+                    "domainlocal" : {
+                        "Senators" : {
+                            "managed_by" : "s.palpatine",
+                            "path" : "CN=Users,DC=republic,DC=local"
+                        }
+                    }
+                }, 
+                "multi_domain_groups_member" : {},
+                "acls" : {}
+            },
+            "security.republic.local" : {
+                "dc" : "dc02",
+                "domain_password" : "NgtI75cKV+Pu",
+                "netbios_name" : "security",
+                "organisation_units" : {},
+                "users" : {
+                    "yoda" : {
+                        "firstname"   : "Yoda",
+                        "surname"     : "-",
+                        "password"    : "StrongP@sswordMuchBe!",
+                        "city"        : "-",
+                        "description" : "Legendary Jedi Grand Master",
+                        "groups"      : ["Domain Admins", "Jedi Order"],
+                        "path"        : "CN=Users,DC=security,DC=republic,DC=local"
+                    },
+                    "a.skywalker" : {
+                        "firstname"   : "Anakin",
+                        "surname"     : "Skywalker",
+                        "password"    : "TheGreatestJediEv3r!",
+                        "city"        : "-",
+                        "description" : "The prophesied Chosen One",
+                        "groups"      : ["Jedi Knights", "Jedi Order"],
+                        "path"        : "CN=Users,DC=security,DC=republic,DC=local"
+                    },
+                    "o.kenobi" : {
+                        "firstname"   : "Obi-Wan",
+                        "surname"     : "Kenobi",
+                        "password"    : "WellHelloThere01#",
+                        "city"        : "-",
+                        "description" : "Jedi Master and mentor",
+                        "groups"      : ["Jedi Masters", "Jedi Order"],
+                        "path"        : "CN=Users,DC=security,DC=republic,DC=local"
+                    }, 
+                    "c.dooku" : {
+                        "firstname"   : "Count",
+                        "surname"     : "Dooku",
+                        "password"    : "TwiceThePride07*",
+                        "city"        : "-",
+                        "description" : "The greatest Makashi practitioner ever",
+                        "groups"      : ["Domain Users"],
+                        "path"        : "CN=Users,DC=security,DC=republic,DC=local"
+                    },
+                    "adm_cdooku" : {
+                        "firstname"   : "Count",
+                        "surname"     : "Dooku",
+                        "password"    : "Secur3Adm1nP@ssword",
+                        "city"        : "-",
+                        "description" : "-",
+                        "groups"      : ["Domain Users"],
+                        "path"        : "CN=Users,DC=security,DC=republic,DC=local"
+                    }
+                }, 
+                "groups" : {
+                    "universal" : {},
+                    "global" : {
+                        "Jedi Order" : {
+                            "path" : "CN=Users,DC=security,DC=republic,DC=local"
+                        },
+                        "Jedi Counsil" : {
+                            "path" : "CN=Users,DC=security,DC=republic,DC=local"
+                        },
+                        "Jedi Masters" : {
+                            "path" : "CN=Users,DC=security,DC=republic,DC=local"
+                        }, 
+                        "Jedi Knights" : {
+                            "path" : "CN=Users,DC=security,DC=republic,DC=local"
+                        }
+                    },
+                    "domainlocal" : {}
+                },
+                "multi_domain_groups_member" : {},
+                "acls" : {
+                    "GenericWrite_admdooku_jedi_archives" : {"samAccountName": "adm_cdooku", "targetSamAccountName": "jedi-archives$", "distinguishedName": "", "dc": "", "right": "GenericWrite", "rightGUID": "", "inheritance": "None"},
+                    "WriteProperty_anakin_jedi_masters" : {"samAccountName": "a.skywalker", "targetSamAccountName": "Jedi Masters", "distinguishedName": "", "dc": "", "right": "WriteProperty", "rightGUID": "", "inheritance": "None"},
+                    "GenericAll_jedi_masters_jedi_counsil" : {"samAccountName": "Jedi Masters", "targetSamAccountName": "Jedi Counsil", "distinguishedName": "", "dc": "", "right": "GenericAll", "rightGUID": "", "inheritance": "None"},
+                    "DCSync_jedi_counsil_domain_admins" : {"samAccountName": "Jedi Counsil", "targetSamAccountName": "", "distinguishedName": "DC=security,DC=republic,DC=local", "dc": "security.republic.local", "right": "DCSync", "rightGUID": "", "inheritance": "None"}
+                }
+            }
+        }
+    }
+}

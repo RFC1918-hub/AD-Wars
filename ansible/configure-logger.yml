@@ -1,0 +1,15 @@
+---
+# load data
+- import_playbook: data.yml
+  vars:
+    data_path: "./config/data/"
+
+- name: Setting up logger host
+  hosts: logger
+  roles:
+    - {role: 'log/logger_setup', tags: 'logger_setup'}
+  vars:
+    hostname: "{{lab.hosts[dict_key].hostname}}"
+    splunk_admin_password: "{{lab.hosts[dict_key].splunk_admin_password}}"
+    guacamole_user: "{{lab.hosts[dict_key].guacamole_user}}"
+    guacamole_password: "{{lab.hosts[dict_key].guacamole_password}}"

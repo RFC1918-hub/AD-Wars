@@ -1,0 +1,63 @@
+---
+# -----------------------------------------
+# load config data
+- import_playbook: data.yml
+  vars:
+    data_path: "./config/data/"
+
+# -----------------------------------------
+# Configure basic windows settings
+- name: Configuring basic settings (hostname, local admin password ex.)
+  hosts: windows
+  roles:
+    - {role: 'settings/admin_password', tags: 'admin_password'}
+    - {role: 'settings/hostname', tags: 'hostname'}
+  vars:
+    local_admin_password: "{{lab.hosts[dict_key].local_admin_password}}"
+    hostname: "{{lab.hosts[dict_key].hostname}}"
+
+# -----------------------------------------
+# Configure primary domain controllers
+- name: Configuring primary DCs
+  hosts: primary_domain_controllers
+  roles:
+    - {role: 'ad/dc_main_domains', tags: 'dc_main_domains'}
+  vars:
+    domain: "{{lab.hosts[dict_key].domain}}"
+    domain_password: "{{lab.domains[domain].domain_password}}"
+    netbios_name: "{{lab.domains[domain].netbios_name}}"
+
+# -----------------------------------------
+# Configure child domain controllers
+- name: Configuring child DCs
+  hosts: child_domain_controllers
+  roles:
+    - {role: 'ad/dc_child_domains', tags: 'dc_child_domains'}
+  vars:
+    domain: "{{lab.hosts[dict_key].domain}}"
+    domain_password: "{{lab.domains[domain].domain_password}}"
+    netbios_name: "{{lab.domains[domain].netbios_name}}"
+    parent_domain: "{{'.'.join(domain.split('.')[1:])}}"
+    parent_domain_password: "{{lab.domains[parent_domain].domain_password}}"
+    source_dc: "{{lab.hosts[lab.domains[parent_domain].dc].hostname}}.{{parent_domain}}"
+
+# -----------------------------------------
+# Configure domain servers
+- name: Adding server to domain
+  hosts: servers
+  roles:
+    - { role: 'ad/dc_servers', tags: 'dc_servers'}
+  vars:
+    member_domain: "{{lab.hosts[dict_key].domain}}"
+    domain_password: "{{lab.domains[member_domain].domain_password}}"
+
+# -----------------------------------------
+# Configure domain desktops
+- name: Adding desktops to domain
+  hosts: desktops
+  roles:
+    - { role: 'ad/dc_desktops', tags: 'dc_desktops'}
+  vars:
+    member_domain: "{{lab.hosts[dict_key].domain}}"
+    domain_password: "{{lab.domains[member_domain].domain_password}}"
+

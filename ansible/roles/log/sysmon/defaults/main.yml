@@ -1,0 +1,2 @@
+sysmon_install_directory: c:\ansible\sysmon
+sysmon_download_url: https://download.sysinternals.com/files/Sysmon.zip

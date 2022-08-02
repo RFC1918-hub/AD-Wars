@@ -1,0 +1,5 @@
+azure_region = "East US"
+default_vm_size = "Standard_DS1_v2"
+admin_username = "ansible"
+admin_password = "SecurePassword1234!"
+ip_whitelist = [ "x.x.x.x" ]

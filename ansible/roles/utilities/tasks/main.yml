@@ -1,0 +1,77 @@
+---
+- name: Installing chocolatey
+  ansible.windows.win_powershell:
+    script: | 
+      Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+- name: Installing multiple packages sequentially
+  win_chocolatey:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - git
+    - 7zip
+    - firefox
+    - notepadplusplus
+    - sysinternals
+    - processhacker
+    - wireshark
+    - pstools
+
+- name: Installing ComputerManagementDsc PowerShell module
+  win_psmodule:
+    name: ComputerManagementDsc
+    state: present
+
+- name: Enabling Remote Desktop Protocol
+  win_dsc:
+    resource_name: RemoteDesktopAdmin
+    IsSingleInstance : 'yes'
+    Ensure: present
+    UserAuthentication: Secure
+
+- name: Installing xNetworking PowerShell module
+  win_psmodule:
+    name: xNetworking
+    state: present
+
+- name: Adding Firewall rule to allow RDP
+  win_dsc:
+    resource_name: xFirewall
+    Name: "Administrator access for RDP (TCP-In)"
+    Ensure: present
+    Enabled: True
+    Profile: "Domain"
+    Direction: "Inbound"
+    Localport: "3389"
+    Protocol: "TCP"
+    Description: "Opens the listener port for RDP"
+
+- name: Ensuring ansible folder exist
+  win_file: 
+    path: c:\ansible\
+    state: directory
+
+- name: Creating bginfo folder
+  win_file: 
+    path: c:\ansible\bginfo
+    state: directory
+
+- name: Copying bginfo config file to host
+  win_copy:
+    src: ./files/
+    dest: c:\ansible\bginfo
+  register: bginfo_config
+
+- name: Installing bginfo 
+  ansible.windows.win_powershell:
+    script: |
+      $vbsScript = @'
+      WScript.Sleep 15000
+      Dim objShell
+      Set objShell = WScript.CreateObject( "WScript.Shell" )
+      objShell.Run("""C:\ProgramData\chocolatey\bin\Bginfo64.exe"" /accepteula ""C:\ansible\bginfo\bginfoconf.bgi"" /silent /timer:0")
+      '@
+
+      $vbsScript | Out-File 'C:\ansible\bginfo\bginfo.vbs'
+      Set-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run -Name bginfo -Value 'wscript "C:\ansible\bginfo\bginfo.vbs"'

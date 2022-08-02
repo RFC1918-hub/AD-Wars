@@ -1,0 +1,192 @@
+---
+- name: "Setting hostname"
+  hostname:
+    name: "{{hostname}}"
+
+- name: Run apt-get update
+  apt:
+    update_cache: yes
+
+- name: Installing required apt packages
+  apt:
+    pkg:
+    - jq
+    - git
+    - htop
+    - whois
+    - unzip
+    - net-tools
+    - python3-pip
+    - build-essential
+    - libcairo2-dev
+    - libjpeg-turbo8-dev
+    - libpng-dev
+    - libtool-bin
+    - libossp-uuid-dev
+    - libvncserver-dev
+    - freerdp2-dev
+    - libssh2-1-dev
+    - libtelnet-dev
+    - libwebsockets-dev
+    - libpulse-dev
+    - libvorbis-dev
+    - libwebp-dev
+    - libssl-dev
+    - libpango1.0-dev
+    - libswscale-dev
+    - libavcodec-dev
+    - libavutil-dev
+    - libavformat-dev
+    - tomcat9
+    - tomcat9-admin
+    - tomcat9-common 
+    - tomcat9-user
+    - mariadb-server
+
+- name: Updating SSH config files to add SSH warning banner
+  replace:
+    path: /etc/ssh/sshd_config
+    regexp: '#Banner.*'
+    replace: 'Banner /etc/banner'
+
+- name: Copying custom SSH warning banner
+  copy: 
+    src: ./files/sshbanner
+    dest: /etc/banner
+  register: copy_banner 
+
+- name: Restarting sshd service if needed
+  service:
+    name: sshd
+    state: restarted
+  when: copy_banner.changed
+
+- set_fact:
+    b64_splunk_download: Y3VybCBodHRwczovL3d3dy5zcGx1bmsuY29tL2VuX3VzL2Rvd25sb2FkL3NwbHVuay1lbnRlcnByaXNlLmh0bWwgfCBncmVwIC1pIGRlYiB8IGdyZXAgLW9QICdkYXRhLWxpbms9IlxLW14iXSsn
+
+- name: Getting Splunk download link
+  shell: "{{b64_splunk_download | b64decode}}"
+  register: splunk_download
+
+- name: Installing Splunk
+  apt:
+    deb: "{{splunk_download.stdout}}"
+  register: splunk_install
+
+- name: Setup Splunk admin password and indexes
+  shell: | 
+    /opt/splunk/bin/splunk start --accept-license --answer-yes --no-prompt --seed-passwd {{splunk_admin_password}}
+    /opt/splunk/bin/splunk add index wineventlog -auth 'admin:{{splunk_admin_password}}'
+    /opt/splunk/bin/splunk add index sysmon -auth 'admin:{{splunk_admin_password}}'
+    /opt/splunk/bin/splunk add index powershell -auth 'admin:{{splunk_admin_password}}'
+  when: splunk_install.changed
+
+- name: Creating ansible directory
+  file:
+    path: /opt/ansible
+    state: directory
+
+- name: Copying Splunk app files to remote host
+  copy:
+    src: ./files/splunk_server
+    dest: /opt/ansible/
+  register: copy_splunkapps
+
+- name: Getting list of all app files on remote host
+  find:
+    paths: /opt/ansible/splunk_server/
+  register: splunk_apps
+
+- name: Installing Splunk apps
+  shell: 
+    /opt/splunk/bin/splunk install app {{item.path}} -auth 'admin:{{splunk_admin_password}}'
+  with_items: "{{splunk_apps.files}}"
+  when: copy_splunkapps.changed
+
+- name: Setup Splunk receiver on port 9997
+  shell: 
+    /opt/splunk/bin/splunk  enable listen 9997 -auth 'admin:{{splunk_admin_password}}'
+  when: splunk_install.changed
+
+- name: Disabling Splunk tour prompt
+  file:
+    path: /opt/splunk/etc/.ui_login
+    state: touch
+
+- name: Disabling Splunk search tour
+  copy:
+    dest: /opt/splunk/etc/system/local/ui-tour.conf
+    content: |
+      [search-tour]\nviewed = 1
+
+- name: Rebooting Splunk service
+  shell: | 
+    /opt/splunk/bin/splunk restart
+    /opt/splunk/bin/splunk enable boot-start
+
+- name: Installing Guacamole server
+  shell: | 
+    wget https://downloads.apache.org/guacamole/1.3.0/source/guacamole-server-1.3.0.tar.gz
+    tar -xvf guacamole-server-1.3.0.tar.gz
+    cd guacamole-server-1.3.0
+    sudo ./configure --with-init-dir=/etc/init.d --enable-allow-freerdp-snapshots
+    sudo make
+    sudo make install
+    sudo ldconfig
+    sudo systemctl daemon-reload
+    sudo systemctl start guacd
+    sudo systemctl enable guacd
+
+- name: Installing Guacamole web app
+  shell: | 
+    wget https://downloads.apache.org/guacamole/1.3.0/binary/guacamole-1.3.0.war
+    sudo mv guacamole-1.3.0.war /var/lib/tomcat9/webapps/guacamole.war
+    sudo systemctl restart tomcat9 guacd
+
+- name: Creating guacamole directory
+  file:
+    path: /etc/guacamole
+    state: directory
+  vars:
+    guacamole_user: "{{guacamole_user}}" 
+    guacamole_password: "{{guacamole_password}}"
+
+- name: Copying user-mapping for Guacamole
+  template:
+    src: ./files/guacamole/user-mapping.xml.j2
+    dest: /etc/guacamole/user-mapping.xml
+ 
+- name: Creating guacamole.properties file
+  copy:
+    dest: /etc/guacamole/guacamole.properties
+    content: |
+      # Hostname and port of guacamole proxy
+      guacd-hostname: localhost
+      guacd-port:     4822
+
+      # Auth provider class (authenticates user/pass combination, needed if using the provided login screen)
+      user-mapping: /etc/guacamole/user-mapping.xml
+      auth-provider: net.sourceforge.guacamole.net.basic.BasicFileAuthenticationProvider
+      basic-user-mapping: /etc/guacamole/user-mapping.xml
+
+- name: Configuring Guacamole
+  shell: | 
+    sudo ln -s /etc/guacamole/guacamole.properties /usr/share/tomcat9/.guacamole/
+    sudo chmod 600 /etc/guacamole/user-mapping.xml
+    sudo chown tomcat:tomcat /etc/guacamole/user-mapping.xml
+    sudo chmod 600 /etc/guacamole/guacamole.properties
+    sudo chown tomcat:tomcat /etc/guacamole/guacamole.properties
+
+- name: Changing Tomcat default port
+  replace:
+    path: /var/lib/tomcat9/conf/server.xml
+    regexp: '<Connector port="8080"'
+    replace: '<Connector port="80"'
+
+- name: Restarting services
+  service:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+    - tomcat9
+    - guacd

@@ -1,0 +1,23 @@
+---
+- name: Upload DookuAdminSession script
+  win_copy:
+    content: | 
+      $passwd = ConvertTo-SecureString "Secur3Adm1nP@ssword" -AsPlainText -Force
+      $creds = New-Object System.Management.Automation.PSCredential ("security\adm_cdooku", $passwd)
+    dest: C:\Windows\DookuScript.ps1
+
+- name: Updating Local Security Policy to allow {{runas_user}} to run scheduled tasks
+  ansible.windows.win_user_right:
+    name: SeBatchLogonRight
+    users:
+    - "{{runas_user}}"
+    action: add
+
+- name: Creating task to run a PS script as {{runas_user}} service
+  ansible.windows.win_powershell:
+    script: |
+      $Action = New-ScheduledTaskAction -Execute 'pwsh.exe' -Argument '-NonInteractive -NoLogo -NoProfile -File "C:\Windows\DookuScript.ps1"'
+      $Trigger = New-ScheduledTaskTrigger -Once -At 3am
+      $Settings = New-ScheduledTaskSettingsSet
+      $Task = New-ScheduledTask -Action $Action -Trigger $Trigger -Settings $Settings
+      Register-ScheduledTask -TaskName 'DookuScript' -InputObject $Task -User '{{runas_user}}' -Password '{{runas_password}}'

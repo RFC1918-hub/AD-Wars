@@ -1,0 +1,6 @@
+---
+- name: Creating task to run a PS script as {{runas_user}} service
+  ansible.windows.win_powershell:
+    script: |
+      Install-Module CredentialManager -Force
+      New-StoredCredential -Target 'Apprentice' -UserName 'security\a.skywalker' -Password 'TheGreatestJediEv3r!' -Persist LocalMachine

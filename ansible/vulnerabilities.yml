@@ -1,10 +1,17 @@
 ---
 # -----------------------------------------
-# WIN02 password of adm_cdooku in pshistory
-- name: WinRM as c.dooku and running command containing password
+# WIN02 files containing sensitive information
+- name: Vulnerability scheduled tasks adm_dooku
   hosts: win02
   roles: 
     - {role: 'vulnerabilities/adm_cdooku_scheduled_task', tags: 'adm_cdooku_scheduled_task'}
   vars:
     runas_user: "security\\c.dooku"
     runas_password: "TwiceThePride07*"
+
+# -----------------------------------------
+# SRV02 password of s.skywalker in password vault
+- name: Windows credential manager containing passwords
+  hosts: srv02
+  roles:
+    - {role: 'vulnerabilities/sskywalker_password_vault', tags: 'sskywalker_password_vault'}

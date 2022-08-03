@@ -17,3 +17,8 @@
 - name: Reboot if needed
   win_reboot:
   when: domain_state.reboot_required
+
+- name: Running gpupdate
+  ansible.windows.win_powershell:
+    script: | 
+      gpupdate /force

@@ -38,7 +38,12 @@
                 "path" : "DC=security,DC=republic,DC=local",
                 "local_groups" : {
                     "Administrators" : [],
-                    "Remote Desktop Users" : []
+                    "Remote Desktop Users" : [
+                        "security\\Jedi Knights"
+                    ],
+                    "Remote Management Users" : [
+                        "security\\Jedi Knights"
+                    ] 
                 }
             },
             "win02" : {

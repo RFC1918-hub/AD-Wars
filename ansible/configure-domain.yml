@@ -48,6 +48,7 @@
   roles:
     - {role: 'ad/dc_gpos', tags: 'dc_gpos'}
   vars:
+    domain: "{{lab.hosts[dict_key].domain}}"
     target: "{{lab.domains[domain].path}}"
 
 # -----------------------------------------

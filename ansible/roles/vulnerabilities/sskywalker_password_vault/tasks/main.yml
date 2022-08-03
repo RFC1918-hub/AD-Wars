@@ -1,8 +1,0 @@
----
-- name: Creating task to run a PS script as {{runas_user}} service
-  ansible.windows.win_powershell:
-    script: |
-      cmdkey /generic:TERMSRV/jedi-archives /user:a.skywalker /pass:TheGreatestJediEv3r!
-      mstsc /v:jedi-archives
-      Start-Sleep 10
-      Get-Process | Where-Object { $_.Name -eq "mstsc" } | Select-Object -First 1 | Stop-Process

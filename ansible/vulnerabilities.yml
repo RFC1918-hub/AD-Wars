@@ -8,10 +8,3 @@
   vars:
     runas_user: "security\\c.dooku"
     runas_password: "TwiceThePride07*"
-
-# -----------------------------------------
-# SRV02 password of s.skywalker in password vault
-- name: Windows credential manager containing passwords
-  hosts: srv02
-  roles:
-    - {role: 'vulnerabilities/sskywalker_password_vault', tags: 'sskywalker_password_vault'}

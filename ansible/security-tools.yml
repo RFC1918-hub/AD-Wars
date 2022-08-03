@@ -22,7 +22,7 @@
   hosts: windows
   roles:
     - {role: 'log/sysmon', tags: 'sysmon'}
-    - {role: 'log/powershell', tags: 'powershell'}
+    #- {role: 'log/powershell', tags: 'powershell'}
     - {role: 'log/splunk_uf', tags: 'splunk_uf'}
   vars:
     splunk_admin_password: "{{lab.hosts['logger'].splunk_admin_password}}"

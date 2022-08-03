@@ -17,4 +17,4 @@
       Import-GPO -BackupGpoName "PowerShell Logging" -TargetName "PowerShell Logging" -Path 'c:\ansible\GPOs\' -CreateIfNeeded
       New-GPLink -Name 'Enhanced Auditing Policy' -Target {{target}} -Enforced yes
       New-GPLink -Name 'Enhanced Auditing Policy' -Target {{target}} -Enforced yes
-      
+      gpupdate /force

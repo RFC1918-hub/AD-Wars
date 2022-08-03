@@ -13,8 +13,8 @@
 - name: Importing GPOs
   ansible.windows.win_powershell:
     script: |
-      Import-GPO -BackupGpoName "Enhanced Auditing Policy" -TargetName "Enhanced Auditing Policy" -Path 'c:\ansible\GPOs\' -CreateIfNeeded
-      Import-GPO -BackupGpoName "PowerShell Logging" -TargetName "PowerShell Logging" -Path 'c:\ansible\GPOs\' -CreateIfNeeded
-      New-GPLink -Name 'Enhanced Auditing Policy' -Target {{target}} -Enforced yes
-      New-GPLink -Name 'Enhanced Auditing Policy' -Target {{target}} -Enforced yes
+      Import-GPO -BackupGpoName "Enhanced Auditing Policy" -TargetName "Enhanced Auditing Policy" -Path 'c:\ansible\GPO\' -CreateIfNeeded
+      Import-GPO -BackupGpoName "PowerShell Logging" -TargetName "PowerShell Logging" -Path 'c:\ansible\GPO\' -CreateIfNeeded
+      New-GPLink -Name 'Enhanced Auditing Policy' -Target '{{target}}' -Enforced yes
+      New-GPLink -Name 'PowerShell Logging' -Target '{{target}}' -Enforced yes
       gpupdate /force

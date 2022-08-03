@@ -37,7 +37,9 @@
                 "domain" : "security.republic.local",
                 "path" : "DC=security,DC=republic,DC=local",
                 "local_groups" : {
-                    "Administrators" : [],
+                    "Administrators" : [
+                        "security\\Jedi Knights"
+                    ],
                     "Remote Desktop Users" : [
                         "security\\Jedi Knights"
                     ],

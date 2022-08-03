@@ -65,6 +65,7 @@
                 "dc" : "dc01",
                 "domain_password" : "8dCT-DJjgScp",
                 "netbios_name" : "republic",
+                "path" : "DC=republic,DC=local",
                 "organisation_units" : {},
                 "users" : {
                     "s.palpatine" : {
@@ -94,6 +95,7 @@
                 "dc" : "dc02",
                 "domain_password" : "NgtI75cKV+Pu",
                 "netbios_name" : "security",
+                "path" : "DC=security,DC=republic,DC=local",
                 "organisation_units" : {},
                 "users" : {
                     "yoda" : {

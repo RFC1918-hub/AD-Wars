@@ -42,6 +42,15 @@
     source_dc: "{{lab.hosts[lab.domains[parent_domain].dc].hostname}}.{{parent_domain}}"
 
 # -----------------------------------------
+# Import GPO policies
+- name: Importing GPO policies
+  hosts: domain_controllers
+  roles:
+    - {role: 'ad/dc_gpos', tags: 'dc_gpos'}
+  vars:
+    target: "{{lab.domains[domain].path}}"
+
+# -----------------------------------------
 # Configure domain servers
 - name: Adding server to domain
   hosts: servers

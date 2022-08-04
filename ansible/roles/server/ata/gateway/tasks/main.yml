@@ -71,4 +71,4 @@
       domain_controller: "{{domain_controller}}"
       ata_admin_password: "{{ata_admin_password}}"
       ansible_username: "{{ansible_user}}"
-      ansible_password: "{{ansible_password}}"
+      ansible_pass: "{{ansible_password}}"

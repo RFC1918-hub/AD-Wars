@@ -125,9 +125,9 @@
     },
     "GatewayCommonConfiguration": {
       "DirectoryServicesClientAccountDomainName": "republic.local",
-      "DirectoryServicesClientAccountName": "{{admin_username}}",
+      "DirectoryServicesClientAccountName": "{{ansible_user}}",
       "DirectoryServicesClientAccountPasswordEncrypted": {
-        "Password": "{{admin_password}}"
+        "Password": "{{ansible_password}}"
       },
       "IsRadiusEventListenerEnabled": false,
       "IsSyslogEventListenerEnabled": false,

@@ -21,26 +21,7 @@
       $creds = New-Object System.Management.Automation.PSCredential ($ansible_username, $passwd)
       Invoke-Command -ComputerName $domain_controller -Credential $creds -ScriptBlock {
           # Enable web requests to endpoints with invalid SSL certs (like self-signed certs)
-          If (-not("SSLValidator" -as [type])) {
-              add-type -TypeDefinition @"
-              using System;
-              using System.Net;
-              using System.Net.Security;
-              using System.Security.Cryptography.X509Certificates;
-
-              public static class SSLValidator {
-                  public static bool ReturnTrue(object sender,
-                      X509Certificate certificate,
-                      X509Chain chain,
-                      SslPolicyErrors sslPolicyErrors) { return true; }
-
-                  public static RemoteCertificateValidationCallback GetDelegate() {
-                      return new RemoteCertificateValidationCallback(SSLValidator.ReturnTrue);
-                  }
-              }
-      "@
-          }
-          [System.Net.ServicePointManager]::ServerCertificateValidationCallback = [SSLValidator]::GetDelegate()
+          [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
 
           Add-Content 'c:\\windows\\system32\\drivers\\etc\\hosts' '        192.168.56.22    jedi-archives.security.local'
           

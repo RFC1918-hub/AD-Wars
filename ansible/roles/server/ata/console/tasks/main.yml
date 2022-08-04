@@ -24,26 +24,7 @@
       $ata_upgrade_downloadUrl = "https://download.microsoft.com/download/5/C/6/5C66EF44-2CFC-474A-987A-07681796314B/ATA1.9.3_Upgrade.exe"
 
       # Enable web requests to endpoints with invalid SSL certs (like self-signed certs)
-      If (-not("SSLValidator" -as [type])) {
-          add-type -TypeDefinition @"
-          using System;
-          using System.Net;
-          using System.Net.Security;
-          using System.Security.Cryptography.X509Certificates;
-
-          public static class SSLValidator {
-              public static bool ReturnTrue(object sender,
-                  X509Certificate certificate,
-                  X509Chain chain,
-                  SslPolicyErrors sslPolicyErrors) { return true; }
-
-              public static RemoteCertificateValidationCallback GetDelegate() {
-                  return new RemoteCertificateValidationCallback(SSLValidator.ReturnTrue);
-              }
-          }
-      "@
-      }
-      [System.Net.ServicePointManager]::ServerCertificateValidationCallback = [SSLValidator]::GetDelegate()
+      [System.Net.ServicePointManager]::ServerCertificateValidationCallback = {$true}
 
       # Install ATA Center
       if (-not (Test-Path "C:\Program Files\Microsoft Advanced Threat Analytics\Center")) {
@@ -77,11 +58,11 @@
 
           }
           $thumbPrint = $req.ServicePoint.Certificate.GetCertHashString()
-          $body = $body -replace "$THUMBPRINT$", $thumbPrint
+          $body = $body -replace "#THUMBPRINT#", $thumbPrint
           Invoke-RestMethod -uri https://localhost/api/management/systemProfiles/center -body $body -Method Post -UseBasicParsing -UseDefaultCredentials -ContentType "application/json"
 
           Invoke-WebRequest -Uri $ata_upgrade_downloadUrl -OutFile $ata_upgrade
-          Start-Process -Wait -FilePath ata_upgrade -ArgumentList "/q" -PassThru
+          Start-Process -Wait -FilePath $ata_upgrade -ArgumentList "/q" -PassThru
           
           $Ansible.Changed = $true
       } else {

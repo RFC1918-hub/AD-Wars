@@ -33,7 +33,8 @@
             "srv02" : {
                 "hostname" : "jedi-archives",
                 "type" : "server", 
-                "local_admin_password" : "Wju#2dcj", 
+                "local_admin_password" : "Wju#2dcj",
+                "ata_admin_password" : "Duiqwey@3x",
                 "domain" : "security.republic.local",
                 "path" : "DC=security,DC=republic,DC=local",
                 "local_groups" : {

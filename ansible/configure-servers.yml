@@ -11,3 +11,13 @@
   hosts: srv02
   roles:
     - { role: 'server/iis', tags: 'iis'}
+
+# -----------------------------------------
+# Configure ATA server
+- name: Configuring ATA servers
+  hosts: domain_controllers
+  roles:
+    - { role: 'server/ata', tags: 'ata'}
+  vars:
+    domain_controller: "{{lab.hosts[dict_key].hostname}}"
+    ata_admin_password: "{{lab.hosts[srv02].ata_admin_password}}"

@@ -1,12 +1,20 @@
 [CmdletBinding()] Param (
+
+    [String]
+    $ansible_username, 
+
+    [String]
+    $ansible_password, 
+
     [String]
     $domain_controller,
 
-    [SecureString]
+    [String]
     $ata_admin_password
 )
 
-$creds = New-Object System.Management.Automation.PSCredential ($ansible_username, $ansible_password)
+$passwd = ConvertTo-SecureString $ -AsPlainText -Force
+$creds = New-Object System.Management.Automation.PSCredential ($ansible_username, $passwd)
 Invoke-Command -ComputerName $domain_controller -Credential $creds -ScriptBlock {
     # Enable web requests to endpoints with invalid SSL certs (like self-signed certs)
     If (-not("SSLValidator" -as [type])) {

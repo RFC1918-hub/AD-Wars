@@ -2,14 +2,6 @@
 - name: Installing ATA center
   ansible.windows.win_powershell:
     script: |
-      [CmdletBinding()] Param (
-          [String]
-          $ansible_username, 
-
-          [String]
-          $ansible_password
-      )
-
       $iso_title = "Microsoft ATA 1.9"
       $iso_path = "C:\ansible\$iso_title"
       $downloadUrl = "http://download.microsoft.com/download/4/9/1/491394D1-3F28-4261-ABC6-C836A301290E/ATA1.9.iso"
@@ -71,14 +63,19 @@
       $config[0].Configuration.DirectoryServicesResolverConfiguration.UpdateDirectoryEntityChangesConfiguration.IsEnabled = $true
 
       Invoke-RestMethod -Uri "https://localhost/api/management/systemProfiles/gateways/$($config[0].Id)" -UseDefaultCredentials -UseBasicParsing -Method Post -ContentType "application/json" -Body ($config[0] | convertto-json -depth 99)
-    parameters:
-      ansible_username: "{{ansible_user}}"
-      ansible_password: "{{ansible_password}}"
+      
 
 - name: Installing ATA gateways
   ansible.windows.win_powershell:
     script: |
       [CmdletBinding()] Param (
+
+          [String]
+          $ansible_username, 
+
+          [String]
+          $ansible_password, 
+
           [String]
           $domain_controller,
 
@@ -86,6 +83,7 @@
           $ata_admin_password
       )
 
+      $passwd = ConvertTo-SecureString $ -AsPlainText -Force
       $creds = New-Object System.Management.Automation.PSCredential ($ansible_username, $ansible_password)
       Invoke-Command -ComputerName $domain_controller -Credential $creds -ScriptBlock {
           # Enable web requests to endpoints with invalid SSL certs (like self-signed certs)
@@ -138,3 +136,5 @@
     parameters:
       domain_controller: "{{domain_controller}}"
       ata_admin_password: "{{ata_admin_password}}"
+      ansible_username: "{{ansible_user}}"
+      ansible_password: "{{ansible_password}}"

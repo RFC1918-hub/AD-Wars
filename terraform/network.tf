@@ -35,10 +35,25 @@ resource "azurerm_network_security_group" "sandbox-nsg" {
     destination_address_prefix = "*"
   }
 
+  # HTTPs access
+  security_rule {
+    name      = "HTTP"
+    priority  = 1005
+    protocol  = "Tcp"
+    access    = "Allow"
+    direction = "Inbound"
+
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    # source_address_prefix      = "*"
+    source_address_prefixes    = var.ip_whitelist
+    destination_address_prefix = "*"
+  }
+
   # RDP access
   security_rule {
     name      = "RDP"
-    priority  = 1005
+    priority  = 1006
     protocol  = "Tcp"
     access    = "Allow"
     direction = "Inbound"
@@ -53,7 +68,7 @@ resource "azurerm_network_security_group" "sandbox-nsg" {
   # WinRM access
   security_rule {
     name      = "WinRM"
-    priority  = 1006
+    priority  = 1007
     protocol  = "Tcp"
     access    = "Allow"
     direction = "Inbound"
@@ -68,7 +83,7 @@ resource "azurerm_network_security_group" "sandbox-nsg" {
   # Splunk access
   security_rule {
     name      = "SplunkWeb"
-    priority  = 1007
+    priority  = 1008
     protocol  = "Tcp"
     access    = "Allow"
     direction = "Inbound"
@@ -83,7 +98,7 @@ resource "azurerm_network_security_group" "sandbox-nsg" {
   # Allow all traffic from the private subnet
   security_rule {
     name      = "PrivateSubnet-TCP"
-    priority  = 1008
+    priority  = 1009
     protocol  = "Tcp"
     access    = "Allow"
     direction = "Inbound"
@@ -96,7 +111,7 @@ resource "azurerm_network_security_group" "sandbox-nsg" {
 
   security_rule {
     name      = "PrivateSubnet-UDP"
-    priority  = 1009
+    priority  = 1010
     protocol  = "Udp"
     access    = "Allow"
     direction = "Inbound"

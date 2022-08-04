@@ -1,11 +1,27 @@
 ---
+- name: Ensuring ansible folder exist
+  win_file: 
+    path: c:\ansible\
+    state: directory
+
+- name: Creating ATA folder
+  win_file: 
+    path: c:\ansible\ata
+    state: directory
+
+- name: Copying user-mapping for Guacamole
+  template:
+    src: ../files/ata_config.json.j2
+    dest: c:\ansible\ata\ata_config.json 
+
 - name: Installing ATA center
   ansible.windows.win_powershell:
     script: |
-      $iso_title = "Microsoft ATA 1.9"
-      $iso_path = "C:\ansible\$iso_title"
-      $downloadUrl = "http://download.microsoft.com/download/4/9/1/491394D1-3F28-4261-ABC6-C836A301290E/ATA1.9.iso"
+      $ata = "C:\ansible\ata\Microsoft ATA 1.9.iso"
+      $ata_downloadUrl = "http://download.microsoft.com/download/4/9/1/491394D1-3F28-4261-ABC6-C836A301290E/ATA1.9.iso"
       $fileHash = "DC1070A9E8F84E75198A920A2E00DDC3CA8D12745AF64F6B161892D9F3975857"
+      $ata_upgrade = "C:\ansible\ata\ATA1.9.3_Upgrade.exe"
+      $ata_upgrade_downloadUrl = "https://download.microsoft.com/download/5/C/6/5C66EF44-2CFC-474A-987A-07681796314B/ATA1.9.3_Upgrade.exe"
 
       # Enable web requests to endpoints with invalid SSL certs (like self-signed certs)
       If (-not("SSLValidator" -as [type])) {
@@ -31,28 +47,42 @@
 
       # Install ATA Center
       if (-not (Test-Path "C:\Program Files\Microsoft Advanced Threat Analytics\Center")) {
-          if (-not (Test-Path $iso_path)) {
+          if (-not (Test-Path $ata)) {
               do {
                   $ProgressPreference = 'SilentlyContinue'
-                  Invoke-WebRequest -Uri $downloadUrl -OutFile $iso_path
-                  $actualHash = (Get-FileHash -Algorithm SHA256 -Path $iso_path).Hash
+                  Invoke-WebRequest -Uri $ata_downloadUrl -OutFile $ata
+                  $actualHash = (Get-FileHash -Algorithm SHA256 -Path $ata).Hash
               } until ($actualHash -eq $fileHash)
           } else {
-              $actualHash = (Get-FileHash -Algorithm SHA256 -Path $iso_path).Hash
+              $actualHash = (Get-FileHash -Algorithm SHA256 -Path $ata).Hash
               if (-not ($actualHash -eq $fileHash)) {
                   do {
                       $ProgressPreference = 'SilentlyContinue'
-                      Invoke-WebRequest -Uri $downloadUrl -OutFile $iso_path
-                      $actualHash = (Get-FileHash -Algorithm SHA256 -Path $iso_path).Hash
+                      Invoke-WebRequest -Uri $ata_downloadUrl -OutFile $ata
+                      $actualHash = (Get-FileHash -Algorithm SHA256 -Path $ata).Hash
                   } until ($actualHash -eq $fileHash)
               }
           }
 
-          $mount = Mount-DiskImage -ImagePath $iso_path -StorageType ISO -Access ReadOnly -PassThru
+          $mount = Mount-DiskImage -ImagePath $ata -StorageType ISO -Access ReadOnly -PassThru
           $volume = $mount | Get-Volume
           Start-Process -Wait -FilePath ($volume.DriveLetter + ':\Microsoft ATA Center Setup.exe') -ArgumentList "/q --LicenseAccepted NetFrameworkCommandLineArguments=`"/q`" --EnableMicrosoftUpdate" -PassThru
           $mount | Dismount-DiskImage -Confirm:$false
 
+          $body = Get-Content "c:\ansible\ata\ata_config.json "
+          $req = [System.Net.WebRequest]::CreateHttp("https://localhost")
+          try {
+            $req.GetResponse()
+          } catch {
+
+          }
+          $thumbPrint = $req.ServicePoint.Certificate.GetCertHashString()
+          $body = $body -replace "$THUMBPRINT$", $thumbPrint
+          Invoke-RestMethod -uri https://localhost/api/management/systemProfiles/center -body $body -Method Post -UseBasicParsing -UseDefaultCredentials -ContentType "application/json"
+
+          Invoke-WebRequest -Uri $ata_upgrade_downloadUrl -OutFile $ata_upgrade
+          Start-Process -Wait -FilePath ata_upgrade -ArgumentList "/q" -PassThru
+          
           $Ansible.Changed = $true
       } else {
           $Ansible.Changed = $false

@@ -1,0 +1,142 @@
+{
+    "Configuration": {
+      "AbnormalBehaviorDetectorConfiguration": {
+        "ExcludedSourceAccountIds": []
+      },
+      "AbnormalKerberosDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "AbnormalSensitiveGroupMembershipChangeDetectorConfiguration": {
+        "ExcludedSourceAccountIds": []
+      },
+      "AbnormalSmbDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "AccountEnumerationDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "CenterTelemetryManagerConfiguration": {
+        "IsEnabled": true,
+        "ServiceUrl": "https://dc.applicationinsights.microsoft.com/v2/track",
+        "ClientInstrumentationKey": "fd3f5bd1-3d71-44a3-9209-d94633544903"
+      },
+      "CenterWebClientConfiguration": {
+        "ServiceEndpoints": [
+          {
+            "Address": "jedi-archives.security.republic.local",
+            "Port": 443
+          }
+        ],
+        "ServiceCertificateThumbprints": [
+          "$THUMBPRINT$"
+        ]
+      },
+      "DetectionConfiguration": {
+        "AlertConfiguration": {
+          "IsMailEnabled": false,
+          "IsSyslogEnabled": true,
+          "To": []
+        },
+        "NotificationVerbosity": "Low"
+      },
+      "DirectoryServicesReplicationDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "DnsReconnaissanceDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "EnumerateSessionsDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "GoldenTicketDetectorConfiguration": {
+        "ExcludedSourceAccountIds": []
+      },
+      "LocalizerConfiguration": {
+        "LocaleId": "en-us"
+      },
+      "MailClientConfiguration": {
+        "IsEnabled": false,
+        "From": null,
+        "ServerEndpoint": null,
+        "ServerSslEnabled": false,
+        "ServerSslAcceptAnyServerCertificate": false,
+        "AuthenticationEnabled": false,
+        "AuthenticationAccountName": null,
+        "AuthenticationAccountPasswordEncrypted": null
+      },
+      "MaliciousServiceCreationDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "MonitoringClientConfiguration": {
+        "AlertConfiguration": {
+          "IsMailEnabled": false,
+          "IsSyslogEnabled": true,
+          "To": []
+        }
+      },
+      "MonitoringEngineConfiguration": {
+        "GatewayInactivityTimeout": "00:05:00"
+      },
+      "PassTheTicketDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "RemoteExecutionDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "ReporterConfiguration": {
+        "ReportTypeToConfigurationMapping": {}
+      },
+      "RetrieveDataProtectionBackupKeyDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "SamrReconnaissanceDetectorConfiguration": {
+        "ExcludedSourceComputerIds": [],
+        "ExcludedSubnets": []
+      },
+      "SecretManagerConfiguration": {
+        "CertificateThumbprint": "$THUMBPRINT$"
+      },
+      "SoftwareUpdaterConfiguration": {
+        "IsGatewayAutomaticSoftwareUpdateEnabled": false,
+        "IsLightweightGatewayAutomaticRestartEnabled": false
+      },
+      "SyslogClientConfiguration": {
+        "IsEnabled": false,
+        "ServerEndpoint": null,
+        "ServerTransport": "Udp",
+        "ServerTransportTimeout": "00:00:10",
+        "Serializer": "Rfc5424"
+      },
+      "UniqueEntityProcessorConfiguration": {
+        "HoneytokenAccountIds": [],
+        "SensitiveAccountIds": [],
+        "SensitiveGroupIds": []
+      }
+    },
+    "GatewayCommonConfiguration": {
+      "DirectoryServicesClientAccountDomainName": "republic.local",
+      "DirectoryServicesClientAccountName": "{{admin_username}}",
+      "DirectoryServicesClientAccountPasswordEncrypted": {
+        "Password": "{{admin_password}}"
+      },
+      "IsRadiusEventListenerEnabled": false,
+      "IsSyslogEventListenerEnabled": false,
+      "RadiusEventListenerSharedSecretEncrypted": null
+    },
+    "SoftwareUpdates": [],
+    "NetbiosName": "jedi-archives",
+    "Version": "1.9.7576.49398",
+    "Id": "62ebdcc47465be10a45502aa",
+    "UpdateTime": "2022-08-04T15:24:05.4145176Z",
+    "Type": "CenterSystemProfile"
+  }

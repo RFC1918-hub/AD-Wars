@@ -6,7 +6,7 @@
           [String]
           $ansible_username, 
 
-          [SecureString]
+          [String]
           $ansible_password
       )
 
@@ -82,7 +82,7 @@
           [String]
           $domain_controller,
 
-          [SecureString]
+          [String]
           $ata_admin_password
       )
 

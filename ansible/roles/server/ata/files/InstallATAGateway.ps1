@@ -4,16 +4,16 @@
     $ansible_username, 
 
     [String]
-    $ansible_password, 
+    $ansible_pass, 
 
     [String]
     $domain_controller,
 
     [String]
-    $ata_admin_password
+    $ata_admin_pass
 )
 
-$passwd = ConvertTo-SecureString $ -AsPlainText -Force
+$passwd = ConvertTo-SecureString $ansible_pass -AsPlainText -Force
 $creds = New-Object System.Management.Automation.PSCredential ($ansible_username, $passwd)
 Invoke-Command -ComputerName $domain_controller -Credential $creds -ScriptBlock {
     # Enable web requests to endpoints with invalid SSL certs (like self-signed certs)
@@ -49,7 +49,7 @@ Invoke-Command -ComputerName $domain_controller -Credential $creds -ScriptBlock 
 
         try {
             Set-Location "$env:temp\gatewaysetup"
-            Start-Process -Wait -FilePath ".\Microsoft ATA Gateway Setup.exe" -ArgumentList "/q NetFrameworkCommandLineArguments=`"/q`" ConsoleAccountName=`"admin`" ConsoleAccountPassword=$ata_admin_password"
+            Start-Process -Wait -FilePath ".\Microsoft ATA Gateway Setup.exe" -ArgumentList "/q NetFrameworkCommandLineArguments=`"/q`" ConsoleAccountName=`"admin`" ConsoleAccountPassword=$ata_admin_pass"
         }
         catch {
             Exit 1

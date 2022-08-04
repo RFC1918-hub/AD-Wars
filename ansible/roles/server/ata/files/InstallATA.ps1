@@ -1,11 +1,3 @@
-[CmdletBinding()] Param (
-    [String]
-    $ansible_username, 
-
-    [SecureString]
-    $ansible_password
-)
-
 $iso_title = "Microsoft ATA 1.9"
 $iso_path = "C:\ansible\$iso_title"
 $downloadUrl = "http://download.microsoft.com/download/4/9/1/491394D1-3F28-4261-ABC6-C836A301290E/ATA1.9.iso"

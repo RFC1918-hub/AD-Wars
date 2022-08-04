@@ -9,7 +9,7 @@
     path: c:\ansible\ata
     state: directory
 
-- name: Copying user-mapping for Guacamole
+- name: Copying ata_config.json
   template:
     src: ../files/ata_config.json.j2
     dest: c:\ansible\ata\ata_config.json

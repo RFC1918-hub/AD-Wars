@@ -80,8 +80,8 @@
           $body = $body -replace "#THUMBPRINT#", $thumbPrint
           Invoke-RestMethod -uri https://localhost/api/management/systemProfiles/center -body $body -Method Post -UseBasicParsing -UseDefaultCredentials -ContentType "application/json"
 
-          Invoke-WebRequest -Uri $ata_upgrade_downloadUrl -OutFile $ata_upgrade
-          Start-Process -Wait -FilePath $ata_upgrade -ArgumentList "/q" -PassThru
+          #Invoke-WebRequest -Uri $ata_upgrade_downloadUrl -OutFile $ata_upgrade
+          #Start-Process -Wait -FilePath $ata_upgrade -ArgumentList "/q" -PassThru
           
           $Ansible.Changed = $true
       } else {

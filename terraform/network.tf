@@ -79,7 +79,7 @@ locals {
       direction = "Inbound"
       source_port_range = "*"
       destination_port_range = "*"
-      source_address_prefixes = "192.168.56.0/24"
+      source_address_prefixes = ["192.168.56.0/24"]
       destination_address_prefix = "*"
     },
     PrivateSubnet_UDP = {
@@ -89,7 +89,7 @@ locals {
       direction = "Inbound"
       source_port_range = "*"
       destination_port_range = "*"
-      source_address_prefixes = "192.168.56.0/24"
+      source_address_prefixes = ["192.168.56.0/24"]
       destination_address_prefix = "*"
     }    
   }

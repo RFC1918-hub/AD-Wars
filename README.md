@@ -161,9 +161,6 @@ When adding new hosts simple add the hosts configuration within the config/data/
 
 Within the hosts file you will find the children groups. (Add the new hosts accordingly)
 
-# TODO
-- Fix GPO policies for advanced audit logging
-
 # Links 
 - https://github.com/clong/DetectionLab
 - https://github.com/Orange-Cyberdefense/GOAD

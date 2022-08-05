@@ -18,15 +18,14 @@
   hosts: srv02
   roles:
     - { role: 'server/ata/console', tags: 'ata_console'}
-  vars:
     
 
 # -----------------------------------------
 # Configure ATA gateways
-- name: Configuring ATA console
-  hosts: domain_controllers
-  roles:
-    - { role: 'server/ata/gateway', tags: 'ata_gateway'}
-  vars:
-    domain_controller: "{{lab.hosts[dict_key].hostname}}"
-    ata_admin_password: "{{lab.hosts[srv02].ata_admin_password}}"
+#- name: Configuring ATA console
+#  hosts: domain_controllers
+#  roles:
+#    - { role: 'server/ata/gateway', tags: 'ata_gateway'}
+#  vars:
+#    domain_controller: "{{lab.hosts[dict_key].hostname}}"
+#    ata_admin_password: "{{lab.hosts[srv02].ata_admin_password}}"

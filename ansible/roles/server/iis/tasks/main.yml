@@ -7,6 +7,11 @@
     include_sub_features: yes
     include_management_tools: yes
 
+- name: Changing IIS server port
+  ansible.windows.win_powershell:
+    script: |
+      Set-WebBinding -Name "Default Web Site" -BindingInformation "*:80:" -PropertyName "Port" -Value "8080"
+
 - name: Copying web files to server
   win_copy:
     src: "files/"

@@ -18,8 +18,21 @@
         [String]
         $target_ou
       )
-      Import-GPO -BackupGpoName "Enhanced Auditing Policy" -TargetName "Enhanced Auditing Policy" -Path 'c:\ansible\GPO\' -CreateIfNeeded
-      Import-GPO -BackupGpoName "PowerShell Logging" -TargetName "PowerShell Logging" -Path 'c:\ansible\GPO\' -CreateIfNeeded
+
+      if (Get-GPO -All | Where-Object {$_.DisplayName -contains "Enhanced Auditing Policy"}) {
+        $Ansible.Changed = $false
+      } else {
+        Import-GPO -BackupGpoName "Enhanced Auditing Policy" -TargetName "Enhanced Auditing Policy" -Path 'c:\ansible\GPO\' -CreateIfNeeded
+        $Ansible.Changed = $true
+      }
+
+      if (Get-GPO -All | Where-Object {$_.DisplayName -contains "PowerShell Logging"}) {
+        $Ansible.Changed = $false
+      } else {
+        Import-GPO -BackupGpoName "PowerShell Logging" -TargetName "PowerShell Logging" -Path 'c:\ansible\GPO\' -CreateIfNeeded
+        $Ansible.Changed = $true
+      }
+
       New-GPLink -Name 'Enhanced Auditing Policy' -Target $target_ou -Enforced yes
       New-GPLink -Name 'PowerShell Logging' -Target $target_ou -Enforced yes
       gpupdate /force

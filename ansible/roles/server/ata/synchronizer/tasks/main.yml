@@ -1,0 +1,31 @@
+---
+- name: Installing ATA center
+  ansible.windows.win_powershell:
+    script: |
+        # Enable web requests to endpoints with invalid SSL certs (like self-signed certs)
+        If (-not("SSLValidator" -as [type])) {
+            add-type -TypeDefinition @"
+            using System;
+            using System.Net;
+            using System.Net.Security;
+            using System.Security.Cryptography.X509Certificates;
+
+            public static class SSLValidator {
+                public static bool ReturnTrue(object sender,
+                    X509Certificate certificate,
+                    X509Chain chain,
+                    SslPolicyErrors sslPolicyErrors) { return true; }
+
+                public static RemoteCertificateValidationCallback GetDelegate() {
+                    return new RemoteCertificateValidationCallback(SSLValidator.ReturnTrue);
+                }
+            }
+        "@
+        }
+        [System.Net.ServicePointManager]::ServerCertificateValidationCallback = [SSLValidator]::GetDelegate()
+
+        $configs = Invoke-RestMethod -Uri "https://localhost/api/management/systemProfiles/gateways" -UseDefaultCredentials -UseBasicParsing
+        foreach ( $config in $configs ) {
+            $config.Configuration.DirectoryServicesResolverConfiguration.UpdateDirectoryEntityChangesConfiguration.IsEnabled = $true
+            Invoke-RestMethod -Uri "https://localhost/api/management/systemProfiles/gateways/$($config.Id)" -UseDefaultCredentials -UseBasicParsing -Method Post -ContentType "application/json" -Body ($config | convertto-json -depth 99)
+        }

@@ -12,20 +12,23 @@
   roles:
     - { role: 'server/iis', tags: 'iis'}
 
-# -----------------------------------------
-# Configure ATA console
+# # -----------------------------------------
+# # Configure ATA console
 - name: Configuring ATA console
   hosts: srv02
   roles:
     - { role: 'server/ata/console', tags: 'ata_console'}
-    
 
 # -----------------------------------------
 # Configure ATA gateways
-#- name: Configuring ATA console
-#  hosts: domain_controllers
-#  roles:
-#    - { role: 'server/ata/gateway', tags: 'ata_gateway'}
-#  vars:
-#    domain_controller: "{{lab.hosts[dict_key].hostname}}"
-#    ata_admin_password: "{{lab.hosts[srv02].ata_admin_password}}"
+- name: Configuring ATA console
+  hosts: domain_controllers
+  roles:
+    - { role: 'server/ata/gateway', tags: 'ata_gateway'}
+
+# -----------------------------------------
+# Configure ATA domain synchronizer
+- name: Configuring ATA domain synchronizer
+  hosts: srv02
+  roles:
+    - { role: 'server/ata/synchronizer', tags: 'ata_synchronizer'}

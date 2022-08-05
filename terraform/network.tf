@@ -37,7 +37,7 @@ resource "azurerm_network_security_group" "sandbox-nsg" {
 
   # HTTPs access
   security_rule {
-    name      = "HTTP"
+    name      = "HTTPs"
     priority  = 1005
     protocol  = "Tcp"
     access    = "Allow"

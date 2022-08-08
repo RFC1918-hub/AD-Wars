@@ -8,3 +8,10 @@
   vars:
     runas_user: "security\\c.dooku"
     runas_password: "TwiceThePride07*"
+
+# -----------------------------------------
+# SRV02 runas interactive logon
+- name: Runas interactive logon
+  hosts: srv02
+  roles: 
+    - {role: 'vulnerabilities/askywalker_jedi_archives', tags: 'askywalker_jedi_archives'}

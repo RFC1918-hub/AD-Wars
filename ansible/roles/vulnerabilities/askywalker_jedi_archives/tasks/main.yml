@@ -3,11 +3,11 @@
   ansible.windows.win_powershell:
     script: |
       echo @"Set x=CreateObject("wscript.shell")
-      wscript.sleep 1500
+      wscript.sleep 1000
       x.sendkeys "TheGreatestJediEv3r!"
       x.sendkeys "{enter}"
-      "@ > $env:temp\\runas_pass.vbs
-      start $env:temp\\runas_pass.vbs
-      runas /user:security\\a.skywalker "calc.exe"
-      Start-Sleep -Seconds 10
+      "@ > $env:temp\runas_pass.vbs
+      start $env:temp\runas_pass.vbs
+      runas /user:security\a.skywalker "calc.exe"
+      Start-Sleep -Seconds 5
       Stop-Process -Name "win32calc" -Force

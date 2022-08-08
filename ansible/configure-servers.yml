@@ -21,7 +21,7 @@
 
 # -----------------------------------------
 # Configure ATA gateways
-- name: Configuring ATA console
+- name: Configuring ATA gateways
   hosts: domain_controllers
   roles:
     - { role: 'server/ata/gateway', tags: 'ata_gateway'}

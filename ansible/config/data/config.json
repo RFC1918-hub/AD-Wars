@@ -127,7 +127,7 @@
                     "o.kenobi" : {
                         "firstname"   : "Obi-Wan",
                         "surname"     : "Kenobi",
-                        "password"    : "WellHelloThere01#",
+                        "password"    : "HelloThere01#",
                         "city"        : "-",
                         "description" : "Jedi Master and mentor",
                         "groups"      : ["Jedi Masters", "Jedi Order"],

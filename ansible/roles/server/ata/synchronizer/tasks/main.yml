@@ -1,5 +1,5 @@
 ---
-- name: Installing ATA center
+- name: Configuring ATA domain synchronizers
   ansible.windows.win_powershell:
     script: |
         # Enable web requests to endpoints with invalid SSL certs (like self-signed certs)

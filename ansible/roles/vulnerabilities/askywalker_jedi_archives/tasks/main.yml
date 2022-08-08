@@ -1,13 +1,23 @@
 ---
-- name: Preforming interactive logon as a.skywalker
-  ansible.windows.win_powershell:
-    script: |
-      echo @"Set x=CreateObject("wscript.shell")
+- name: Upload interactive_logon.ps1 script
+  win_copy:
+    content: | 
+      Write-Output @"
+      Set x=CreateObject("wscript.shell")
       wscript.sleep 1000
       x.sendkeys "TheGreatestJediEv3r!"
       x.sendkeys "{enter}"
       "@ > $env:temp\runas_pass.vbs
-      start $env:temp\runas_pass.vbs
+      Start-Process $env:temp\runas_pass.vbs
       runas /user:security\a.skywalker "calc.exe"
       Start-Sleep -Seconds 5
       Stop-Process -Name "win32calc" -Force
+    dest: c:\Users\ansible\AppData\Local\Temp\2\interactive_logon.ps1
+
+- name: Preforming interactive logon as a.skywalker
+  ansible.windows.win_powershell:
+    script: |
+      powershell.exe C:\Users\ansible\AppData\Local\Temp\2\interactive_logon.ps1
+
+
+      

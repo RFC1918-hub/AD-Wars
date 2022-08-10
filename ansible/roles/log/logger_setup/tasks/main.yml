@@ -9,12 +9,17 @@
 
 - name: Installing apt-fast
   shell: | 
-    sudo add-apt-repository ppa:apt-fast/stable
-    sudo apt-get update
-    sudo apt-get -y install apt-fast
+    add-apt-repository -y -n ppa:apt-fast/stable
+    apt-get -qq update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y apt-fast
+    echo debconf apt-fast/maxdownloads string 16 | debconf-set-selections
+    echo debconf apt-fast/dlflag boolean true | debconf-set-selections
+    echo debconf apt-fast/aptmanager string apt-get | debconf-set-selections
   register: apt_fast
 
-- set_fact: required_apt_packages="{{ required_apt_packages + [ item ] }}"
+- set_fact: 
+    required_apt_packages: 
+      "{{required_apt_packages}} {{item}}"
   with_items:
     - jq
     - git
@@ -48,6 +53,9 @@
     - tomcat9-common 
     - tomcat9-user
     - mariadb-server
+  vars:
+    required_apt_packages: ""
+
 
 - name: Installing required apt packages
   shell: | 

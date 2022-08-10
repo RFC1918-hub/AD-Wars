@@ -4,9 +4,9 @@
             "logger" : {
                 "hostname" : "logger",
                 "type" : "server",
-                "splunk_admin_password" : "QweuEw-12weD",
                 "guacamole_user" : "guacadmin",
-                "guacamole_password" : "Huyd2jd@uch"
+                "guacamole_password" : "Huyd2jd@uch",
+                "splunk_admin_password" : "QweuEw-12weD"
             },
             "dc01" : {
                 "hostname" : "republic-dc",

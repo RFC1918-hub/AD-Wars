@@ -1,15 +1,21 @@
 ---
-- name: "Setting hostname"
+- name: Ensuring hostname is set
   hostname:
     name: "{{hostname}}"
 
-- name: Run apt-get update
+- name: Running apt-get update
   apt:
     update_cache: yes
 
-- name: Installing required apt packages
-  apt:
-    pkg:
+- name: Installing apt-fast
+  shell: | 
+    sudo add-apt-repository ppa:apt-fast/stable
+    sudo apt-get update
+    sudo apt-get -y install apt-fast
+  register: apt_fast
+
+- set_fact: required_apt_packages="{{ required_apt_packages + [ item ] }}"
+  with_items:
     - jq
     - git
     - htop
@@ -42,6 +48,10 @@
     - tomcat9-common 
     - tomcat9-user
     - mariadb-server
+
+- name: Installing required apt packages
+  shell: | 
+    apt-fast install -y {{required_apt_packages}}
 
 - name: Updating SSH config files to add SSH warning banner
   replace:
@@ -107,17 +117,6 @@
   shell: 
     /opt/splunk/bin/splunk  enable listen 9997 -auth 'admin:{{splunk_admin_password}}'
   when: splunk_install.changed
-
-- name: Disabling Splunk tour prompt
-  file:
-    path: /opt/splunk/etc/.ui_login
-    state: touch
-
-- name: Disabling Splunk search tour
-  copy:
-    dest: /opt/splunk/etc/system/local/ui-tour.conf
-    content: |
-      [search-tour]\nviewed = 1
 
 - name: Rebooting Splunk service
   shell: | 

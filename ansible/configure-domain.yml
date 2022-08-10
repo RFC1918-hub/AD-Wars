@@ -10,18 +10,18 @@
 - name: Configuring basic settings (hostname, local admin password ex.)
   hosts: windows
   roles:
-    - {role: 'settings/admin_password', tags: 'admin_password'}
     - {role: 'settings/hostname', tags: 'hostname'}
+    - {role: 'settings/admin_password', tags: 'admin_password'}
   vars:
-    local_admin_password: "{{lab.hosts[dict_key].local_admin_password}}"
     hostname: "{{lab.hosts[dict_key].hostname}}"
+    local_admin_password: "{{lab.hosts[dict_key].local_admin_password}}"
 
 # -----------------------------------------
 # Configure primary domain controllers
 - name: Configuring primary DCs
   hosts: primary_domain_controllers
   roles:
-    - {role: 'ad/dc_main_domains', tags: 'dc_main_domains'}
+    - {role: 'ad/domain_controller/primary', tags: 'dc_primary'}
   vars:
     domain: "{{lab.hosts[dict_key].domain}}"
     domain_password: "{{lab.domains[domain].domain_password}}"
@@ -32,7 +32,7 @@
 - name: Configuring child DCs
   hosts: child_domain_controllers
   roles:
-    - {role: 'ad/dc_child_domains', tags: 'dc_child_domains'}
+    - {role: 'ad/domain_controller/child', tags: 'dc_child'}
   vars:
     domain: "{{lab.hosts[dict_key].domain}}"
     domain_password: "{{lab.domains[domain].domain_password}}"
@@ -46,7 +46,7 @@
 - name: Importing GPO policies
   hosts: domain_controllers
   roles:
-    - {role: 'ad/dc_gpos', tags: 'dc_gpos'}
+    - {role: 'ad/configurations/gpos', tags: 'ad_gpos'}
   vars:
     domain: "{{lab.hosts[dict_key].domain}}"
     target_ou: "{{lab.domains[domain].path}}"
@@ -56,7 +56,7 @@
 - name: Adding server to domain
   hosts: servers
   roles:
-    - { role: 'ad/dc_servers', tags: 'dc_servers'}
+    - { role: 'ad/domain_machines', tags: 'domain_servers', type: 'server'}
   vars:
     member_domain: "{{lab.hosts[dict_key].domain}}"
     domain_password: "{{lab.domains[member_domain].domain_password}}"
@@ -66,7 +66,7 @@
 - name: Adding desktops to domain
   hosts: desktops
   roles:
-    - { role: 'ad/dc_desktops', tags: 'dc_desktops'}
+    - { role: 'ad/domain_machines', tags: 'domain_desktops', type: 'desktop'}
   vars:
     member_domain: "{{lab.hosts[dict_key].domain}}"
     domain_password: "{{lab.domains[member_domain].domain_password}}"

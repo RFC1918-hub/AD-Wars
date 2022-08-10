@@ -1,17 +1,10 @@
 ---
 # -----------------------------------------
 # WIN02 files containing sensitive information
-# - name: Vulnerability scheduled tasks adm_dooku
-#   hosts: win02
-#   roles: 
-#     - {role: 'vulnerabilities/adm_cdooku_scheduled_task', tags: 'adm_cdooku_scheduled_task'}
-#   vars:
-#     runas_user: "security\\c.dooku"
-#     runas_password: "TwiceThePride07*"
-
-# -----------------------------------------
-# SRV02 runas interactive logon
-- name: Runas interactive logon
-  hosts: srv02
+- name: Vulnerability scheduled tasks adm_dooku
+  hosts: win02
   roles: 
-    - {role: 'vulnerabilities/askywalker_jedi_archives', tags: 'askywalker_jedi_archives'}
+    - {role: 'vulnerabilities/adm_cdooku_scheduled_task', tags: 'adm_cdooku_scheduled_task'}
+  vars:
+    runas_user: "security\\c.dooku"
+    runas_password: "TwiceThePride07*"

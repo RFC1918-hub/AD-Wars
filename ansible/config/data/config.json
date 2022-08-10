@@ -4,9 +4,9 @@
             "logger" : {
                 "hostname" : "logger",
                 "type" : "server",
-                "splunk_admin_password" : "QweuEw-12weD",
                 "guacamole_user" : "guacadmin",
-                "guacamole_password" : "Huyd2jd@uch"
+                "guacamole_password" : "GuacAdm1nPassw0rd",
+                "splunk_admin_password" : "SplunkAdm1nPassw0rd"
             },
             "dc01" : {
                 "hostname" : "republic-dc",
@@ -34,7 +34,6 @@
                 "hostname" : "jedi-archives",
                 "type" : "server", 
                 "local_admin_password" : "Wju#2dcj",
-                "ata_admin_password" : "Duiqwey@3x",
                 "domain" : "security.republic.local",
                 "path" : "DC=security,DC=republic,DC=local",
                 "local_groups" : {

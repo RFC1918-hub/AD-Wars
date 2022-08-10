@@ -1,13 +1,4 @@
 ---
-# - name: Ensuring windows defender is installed
-#   win_feature:
-#     name: Windows-Defender
-#   register: win_defender_install
-
-# - name: Rebooting system if needed
-#   win_reboot:
-#   when: win_defender_install.reboot_required
-
 - name: Disabling windows defender sending samples
   ansible.windows.win_powershell:
     script: |

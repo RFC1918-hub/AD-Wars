@@ -8,3 +8,13 @@
   vars:
     runas_user: "security\\c.dooku"
     runas_password: "TwiceThePride07*"
+
+# -----------------------------------------
+# SRV02 autologon
+- name: Autologon as a.skywalker on SRV02
+  hosts: srv02
+  roles:
+    - {role: 'vulnerabilities/auto_logon_askywalker', tags: 'auto_logon_askywalker'}
+  vars:
+    auto_logon_username: "a.skywalker"
+    auto_logon_password: "TheGreatestJediEv3r!"

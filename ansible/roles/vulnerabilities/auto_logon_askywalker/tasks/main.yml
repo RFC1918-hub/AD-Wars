@@ -1,0 +1,21 @@
+---
+- name: Adding autologon in registry
+  ansible.windows.win_powershell:
+    script: | 
+      [CmdletBinding()] Param (
+        [String]
+        $auto_logon_username,
+
+        [String]
+        $auto_logon_password
+      )
+
+      $RegPath = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
+      $DefaultUsername = $auto_logon_username
+      $DefaultPassword = $auto_logon_password
+      Set-ItemProperty $RegPath "AutoAdminLogon" -Value "1" -type String 
+      Set-ItemProperty $RegPath "DefaultUsername" -Value "$DefaultUsername" -type String 
+      Set-ItemProperty $RegPath "DefaultPassword" -Value "$DefaultPassword" -type String
+    parameters:
+      auto_logon_username: "{{auto_logon_username}}"
+      auto_logon_password: "{{auto_logon_password}}"

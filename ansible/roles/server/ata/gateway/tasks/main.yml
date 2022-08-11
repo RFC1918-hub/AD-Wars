@@ -7,7 +7,7 @@
             $ansible_user, 
 
             [String]
-            $ansible_pass
+            $ansible_password
         )
 
         # Enable web requests to endpoints with invalid SSL certs (like self-signed certs)
@@ -37,7 +37,7 @@
         if (-not (Test-Path "C:\Program Files\Microsoft Advanced Threat Analytics")) {
             if (-not (Test-Path "$env:temp\gatewaysetup.zip")) {
                 $ProgressPreference = 'SilentlyContinue'
-                $passwd = ConvertTo-SecureString $ansible_pass -AsPlainText -Force
+                $passwd = ConvertTo-SecureString $ansible_password -AsPlainText -Force
                 $creds = New-Object System.Management.Automation.PSCredential ($ansible_user, $passwd)
                 Invoke-WebRequest -uri https://jedi-archives/api/management/softwareUpdates/gateways/deploymentPackage -UseBasicParsing -OutFile "$env:temp\gatewaysetup.zip" -Credential $creds        
                 Expand-Archive -Path "$env:temp\gatewaysetup.zip" -DestinationPath "$env:temp\gatewaysetup" -Force
@@ -45,7 +45,7 @@
 
             try {
                 Set-Location "$env:temp\gatewaysetup"
-                Start-Process -Wait -FilePath ".\Microsoft ATA Gateway Setup.exe" -ArgumentList "/q NetFrameworkCommandLineArguments=`"/q`" ConsoleAccountName=$ansible_user ConsoleAccountPassword=$ansible_pass"
+                Start-Process -Wait -FilePath ".\Microsoft ATA Gateway Setup.exe" -ArgumentList "/q NetFrameworkCommandLineArguments=`"/q`" ConsoleAccountName=$ansible_user ConsoleAccountPassword=$ansible_password"
             }
             catch {
                 Exit 1
@@ -60,4 +60,4 @@
         }
     parameters:
       ansible_user: "{{ansible_user}}"
-      ansible_pass: "{{ansible_password}}"
+      ansible_password: "{{ansible_password}}"

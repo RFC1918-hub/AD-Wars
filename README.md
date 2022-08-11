@@ -4,64 +4,24 @@ Scalable Active Directory domain Azure sandbox equipped with security logging fo
 ![AD Wars](./images/AD%20Wars.jpg)
 
 # Getting started
-## Requirements
-To deploy AD-Wars sandbox you will need to have the following installed
-* Terraform
-* Ansible
-* Azure subscription
+## Prerequisites
+- [Install Terraform](https://www.terraform.io/downloads)
+- [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+  > You can use the Ubuntu WSL subsystem on windows to install ansible as well
+- Have a [Azure subscription](https://azure.microsoft.com/en-us/free/)
 
-## Installing requirements
-Installing Terraform on windows using chocolatey:
-https://learn.hashicorp.com/tutorials/terraform/install-cli
-
-```powershell
-choco install terraform
-```
-
-
-Installing Ansible on windows using Ubuntu sub-system: 
-https://docs.microsoft.com/en-us/windows/wsl/install
-
-```bash
-python3 -m pip install --user ansible
-```
-
-## Building the VMs in Azure subscription using Terraform
-> This has been tested running Terraform from windows.
-
-```powershell
-git clone [[repo]]
-cd Terraform/
-```
-
-Before you can deploy to Azure you will need to update your terraform.tfvars file. You can do this by using the template file: **terraform.tfvars.template** 
-This wil contain all your configuration variables. 
-
-```
-mv terraform.tfvars.template terraform.tfvars
-
-# edit the variables according to your config
-```
-
-You will also need to authenticate against your Azure tenent. You can do so using the Az module.
-
-https://docs.microsoft.com/en-us/powershell/azure/install-az-ps?view=azps-8.1.0
-
-Once installed simply run 
-
-```
-az login
-
-# confirm subscription by running 
-az show account
-```
-
-Now you can deploy using Terraform: 
-```
-terraform init
-terraform plan
-terraform apply
-```
+# Installation steps
+## Building the VMs using Terraform
+1. Configure the `terraform.tfvars` file
+  - Copy the file `terraform/terraform.tfvars.template` to `terraform/terraform.tfvars`
+  - In the newly copied terraform.tfvars file, provide the values for each variable
+2. Authenticate to Azure using `az`
+  - Run `az login`. This should bring up a browser that asks you to sign into your Azure account
+  - TO confirm you've been authenticated successfully, run `az account show`
+3. Bring up the VM's using Terraform
+  - `cd` to `terraform` and run `terraform init` to initialize the working directory
+  - Run `terraform apply` to check the Terraform plan or `terraform apply --auto-approve` to bypass the check
+4. Wait for Terraform to finish running. Once finished you should see the Terraform output with the VM's public IP's that you will need for the next step. 
 
 **Output example:**
 ```
@@ -79,58 +39,35 @@ windows-vm-publicip = {
 }
 ```
 
-## Configuring the sandbox using Ansible playbooks
-Once your VMs are up and running using Terraform, replace the x.x.x.x IP address is the ansible hosts file with the public IP addresses from the output of the terraform deployment, as well as the ansible_username and ansible_password variables with what you set in the terraform.tfvars file. 
-
-> Testing has been done using Ubuntu on WSL
-> You might incounter the following error message
-> [WARNING]: Ansible is being run in a world writable directory (/GitHub/AD-Wars/ansible), ignoring it as an ansible.cfg source. For more information see
-> https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
-> Using /etc/ansible/ansible.cfg as config file
-> To fix this mv the ansible folder to the Ubuntu WSL sub-system.  
-
-You can either just run main.yml to deploy all:
+## Configuring the sandbox environment using Ansible playbooks. 
+1. Configure the `hosts` file
+  - Copy the file `ansible/hosts.template` to `ansible/hosts`
+  - In the newly copied hosts file, provide the values for each variable (this will be the public IP's from the previous step)
+2. You can either run `ansible-playbook main.yml` to run all playbooks, or for troubleshooting you can run them one for one by running: 
 
 ```
-ansible-playbook main.yml
-```
-
-or run each task individual for troubleshooting
-
-```
-# -----------------------------------------
-# Installing necessary utilities
-ansible-playbook install-utilities.yml
-
-# -----------------------------------------
-# Configuring AD domain
-ansible-playbook configure-domain.yml
-
-# -----------------------------------------
-# Configuring logger host 
-ansible-playbook configure-logger.yml 
-
-# -----------------------------------------
-# Configuring servers
-ansible-playbook configure-servers.yml
-
-# -----------------------------------------
-# Import domain objects
-ansible-playbook import-domain-objects.yml 
-
-# -----------------------------------------
-# Configure vulnerabilities
-ansible-playbook vulnerabilities.yml
-
-# -----------------------------------------
-# Configuring logging and splunk forwarders
-ansible-playbook security-tools.yml
+ansible-playbook install-utilities.yml      # Installing necessary utilities
+ansible-playbook configure-domain.yml       # Configuring AD domain
+ansible-playbook configure-logger.yml       # Configuring logger host
+ansible-playbook configure-servers.yml      # Configuring servers
+ansible-playbook import-domain-objects.yml  # Import domain objects
+ansible-playbook vulnerabilities.yml        # Configure vulnerabilities
+ansible-playbook security-tools.yml         # Configuring logging and splunk forwarders
 ```
 
 ## Destroying the lab
 
 ```
 terraform destroy
+```
+
+## Managing the VM's
+You can use the `manage_azure_vms.ps1` to shutdown and boot the VM's in Azure for cost saving
+
+```
+./manage_azure_vms.ps1 # list VM's
+./manage_azure_vms.ps1 -shutdown
+./manage_azure_vms.ps1 -boot
 ```
 
 # Lab details
@@ -155,10 +92,8 @@ republic-dc = {
 ```
 
 ## Ansible config
-All domain config and deployment will be managed from the config/data/config.json file. 
-
-When adding new hosts simple add the hosts configuration within the config/data/config.json file and update the hosts file accordingly.
-
+All domain config and deployment will be managed from the ansible/config/data/config.json file. 
+When adding new hosts simple add the hosts configuration within the ansible/config/data/config.json file and update the hosts file accordingly.
 Within the hosts file you will find the children groups. (Add the new hosts accordingly)
 
 # Links 

@@ -36,3 +36,32 @@
       # Apply new rule
       $NewAcl.SetAccessRule($fileSystemAccessRule)
       Set-Acl -Path "c:\inetpub\wwwroot\uploads" -AclObject $NewAcl
+
+- name: Installing xNetworking Powershell module
+  win_psmodule:
+    name: xNetworking
+    state: present
+
+- name: Opening 443 on firewall
+  win_dsc:
+    resource_name: xFirewall
+    Name: "Access to web services (TCP-In)"
+    Ensure: present
+    Enabled: True
+    Profile: "Domain"
+    Direction: "Inbound"
+    Localport: "443"
+    Protocol: "TCP"
+    Description: "Open port 443"
+
+- name: Opening 8080 on firewall
+  win_dsc:
+    resource_name: xFirewall
+    Name: "Access to web services (TCP-In)"
+    Ensure: present
+    Enabled: True
+    Profile: "Domain"
+    Direction: "Inbound"
+    Localport: "8080"
+    Protocol: "TCP"
+    Description: "Open port 8080"

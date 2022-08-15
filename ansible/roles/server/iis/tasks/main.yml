@@ -42,26 +42,7 @@
     name: xNetworking
     state: present
 
-- name: Opening 443 on firewall
-  win_dsc:
-    resource_name: xFirewall
-    Name: "Access to web services (TCP-In)"
-    Ensure: present
-    Enabled: True
-    Profile: "Domain"
-    Direction: "Inbound"
-    Localport: "443"
-    Protocol: "TCP"
-    Description: "Open port 443"
-
-- name: Opening 8080 on firewall
-  win_dsc:
-    resource_name: xFirewall
-    Name: "Access to web services (TCP-In)"
-    Ensure: present
-    Enabled: True
-    Profile: "Domain"
-    Direction: "Inbound"
-    Localport: "8080"
-    Protocol: "TCP"
-    Description: "Open port 8080"
+- name: Disable windows firewall
+  ansible.windows.win_powershell:
+    script: | 
+      Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False

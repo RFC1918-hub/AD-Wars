@@ -69,21 +69,68 @@
           Start-Process -Wait -FilePath ($volume.DriveLetter + ':\Microsoft ATA Center Setup.exe') -ArgumentList "/q --LicenseAccepted NetFrameworkCommandLineArguments=`"/q`" --EnableMicrosoftUpdate" -PassThru
           $mount | Dismount-DiskImage -Confirm:$false
 
-          $body = Get-Content "c:\ansible\ata\ata_config.json "
-          $req = [System.Net.WebRequest]::CreateHttp("https://localhost")
-          try {
-            $req.GetResponse()
-          } catch {
-
-          }
-          $thumbPrint = $req.ServicePoint.Certificate.GetCertHashString()
-          $body = $body -replace "#THUMBPRINT#", $thumbPrint
-          Invoke-RestMethod -uri https://localhost/api/management/systemProfiles/center -body $body -Method Post -UseBasicParsing -UseDefaultCredentials -ContentType "application/json"
-
-          #Invoke-WebRequest -Uri $ata_upgrade_downloadUrl -OutFile $ata_upgrade
-          #Start-Process -Wait -FilePath $ata_upgrade -ArgumentList "/q" -PassThru
+          Invoke-WebRequest -Uri $ata_upgrade_downloadUrl -OutFile $ata_upgrade
+          Start-Process -Wait -FilePath $ata_upgrade -ArgumentList "/q --LicenseAccepted NetFrameworkCommandLineArguments=`"/q`"" -PassThru
           
           $Ansible.Changed = $true
       } else {
           $Ansible.Changed = $false
       }
+
+- name: Configure ATA config
+  ansible.windows.win_powershell:
+    script: |
+      [CmdletBinding()] Param (
+          [String]
+          $ansible_user, 
+
+          [String]
+          $ansible_password
+      )
+
+      # Enable web requests to endpoints with invalid SSL certs (like self-signed certs)
+      If (-not("SSLValidator" -as [type])) {
+          add-type -TypeDefinition @"
+          using System;
+          using System.Net;
+          using System.Net.Security;
+          using System.Security.Cryptography.X509Certificates;
+
+          public static class SSLValidator {
+              public static bool ReturnTrue(object sender,
+                  X509Certificate certificate,
+                  X509Chain chain,
+                  SslPolicyErrors sslPolicyErrors) { return true; }
+
+              public static RemoteCertificateValidationCallback GetDelegate() {
+                  return new RemoteCertificateValidationCallback(SSLValidator.ReturnTrue);
+              }
+          }
+      "@
+      }
+      [System.Net.ServicePointManager]::ServerCertificateValidationCallback = [SSLValidator]::GetDelegate()
+
+      $config = (Invoke-WebRequest https://localhost/api/management/systemProfiles/center -UseBasicParsing -Credential $creds).Content | ConvertFrom-Json
+
+      if (!$config.GatewayCommonConfiguration.DirectoryServicesClientAccountDomainName) {
+          $passwd = ConvertTo-SecureString $ansible_password -AsPlainText -Force
+          $creds = New-Object System.Management.Automation.PSCredential ($ansible_user, $passwd)
+
+          $body = Get-Content "c:\ansible\ata\ata_config.json "
+          $req = [System.Net.WebRequest]::CreateHttp("https://localhost")
+          try {
+          $req.GetResponse()
+          } catch {
+
+          }
+          $thumbPrint = $req.ServicePoint.Certificate.GetCertHashString()
+          $body = $body -replace "#THUMBPRINT#", $thumbPrint
+          Invoke-RestMethod -uri https://localhost/api/management/systemProfiles/center -body $body -Method Post -UseBasicParsing -ContentType "application/json" -Credential $creds
+
+          $Ansible.Changed = $true
+      } else {
+          $Ansible.Changed = $false
+      }
+    parameters:
+      ansible_user: "{{ansible_user}}"
+      ansible_password: "{{ansible_password}}"

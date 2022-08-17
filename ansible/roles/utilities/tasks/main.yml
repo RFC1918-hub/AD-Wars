@@ -11,6 +11,8 @@
   with_items:
     - git
     - 7zip
+    - vscode
+    - ilspy
     - firefox
     - notepadplusplus
     - sysinternals

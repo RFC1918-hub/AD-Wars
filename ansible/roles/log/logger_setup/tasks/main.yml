@@ -131,11 +131,20 @@
     src: ./files/splunk_server/splunk_dashboards/logger_dashboard.xml
     dest: /opt/splunk/etc/apps/search/local/data/ui/views/logger_dashboard.xml
 
-- name: Setting home dashboard
-  lineinfile:
-    path: /opt/splunk/etc/users/admin/user-prefs/local/user-prefs.conf
-    line: 'display.page.home.dashboardId = /servicesNS/nobody/search/data/ui/views/logger_dashboard'
-    insertbefore: EOF
+- name: Ensuring user-prefs folder path exist
+  file:
+    path: /opt/splunk/etc/users/admin/user-prefs/local/
+    recurse: true
+
+- name: Ensuring user-prefs file exist
+  copy:
+    dest: /opt/splunk/etc/users/admin/user-prefs/local/user-prefs.conf
+    content: |
+      [general]
+      render_version_messages = 1
+      dismissedInstrumentationOptInVersion = 4
+      hideInstrumentationOptInModal = 1
+      display.page.home.dashboardId = /servicesNS/nobody/search/data/ui/views/logger_dashboard
 
 - name: Setup Splunk receiver on port 9997
   shell: 

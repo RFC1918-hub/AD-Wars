@@ -5,3 +5,19 @@
     members: "{{ item.value }}"
     state: present
   with_dict: "{{ local_groups }}"
+
+- name: Adding local admin user
+  ansible.windows.win_powershell:
+    script: | 
+      [CmdletBinding()] Param (
+          [String]
+          $local_admin_username,
+
+          [String]
+          $local_admin_password
+      )
+      net user $local_admin_username $local_admin_password /add
+      net localgroup Administrators $local_admin_username /add
+    parameters:
+      local_admin_username: "{{local_admin_user}}"
+      local_admin_password: "{{local_admin_password}}"

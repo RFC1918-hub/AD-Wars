@@ -12,7 +12,6 @@
   roles:
     - {role: 'settings/hostname', tags: 'hostname'}
     - {role: 'settings/admin_password', tags: 'admin_password'}
-    - {role: 'settings/local_admin', tags: 'local_admin'}
   vars:
     hostname: "{{lab.hosts[dict_key].hostname}}"
     local_admin_password: "{{lab.hosts[dict_key].local_admin_password}}"

@@ -16,7 +16,7 @@
           [String]
           $local_admin_password
       )
-      net user $local_admin_username $local_admin_password /add
+      net user $local_admin_username $local_admin_password /add /Y
       net localgroup Administrators $local_admin_username /add
     parameters:
       local_admin_username: "{{local_admin_user}}"

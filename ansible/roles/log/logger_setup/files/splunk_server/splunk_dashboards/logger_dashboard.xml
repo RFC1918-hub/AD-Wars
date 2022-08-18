@@ -1,0 +1,63 @@
+<dashboard version="1.1">
+  <label>logger_dashboard</label>
+  <fieldset submitButton="false">
+    <input type="time" token="tk_globaltime">
+      <label></label>
+      <default>
+        <earliest>-7d@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Splunk Index Breakdown</title>
+      <table>
+        <search>
+          <query>index=* 
+| stats values(sourcetype) as sourcetype by index</query>
+          <earliest>$tk_globaltime.earliest$</earliest>
+          <latest>$tk_globaltime.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+    <panel>
+      <title>Events by sourcetype per Hour</title>
+      <chart>
+        <search>
+          <query>| tstats count where index=* by sourcetype, _time span=1h prestats=t | timechart span=1h count by sourcetype</query>
+          <earliest>$tk_globaltime.earliest$</earliest>
+          <latest>$tk_globaltime.latest$</latest>
+        </search>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="height">281</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="trellis.enabled">0</option>
+        <option name="trellis.scales.shared">1</option>
+        <option name="trellis.size">small</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Events by Host per Hour</title>
+      <chart>
+        <search>
+          <query>| tstats count where index=* by host, _time span=1h prestats=t | timechart span=1h count by host</query>
+          <earliest>$tk_globaltime.earliest$</earliest>
+          <latest>$tk_globaltime.latest$</latest>
+        </search>
+        <option name="charting.chart">area</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+</dashboard>

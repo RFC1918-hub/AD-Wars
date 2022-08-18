@@ -1,6 +1,8 @@
 [all:vars]
 ansible_user=ansible
 ansible_password=SecurePassword1234!
+local_admin_user=r2d2
+local_admin_password=SecurePassword1234!
 
 ; -----------------------------------------
 ; Groups

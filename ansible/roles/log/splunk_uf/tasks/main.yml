@@ -32,13 +32,13 @@
 
 - name: Copying Splunk app to remote host
   win_copy:
-    src: ../../logger_setup/files/splunk_server
+    src: ../../logger_setup/files/splunk_server/splunk_apps
     dest: c:\ansible\
   register: splunk_uf_apps
 
 - name: Getting list of all app files on remote host
   win_find:
-    paths: c:\ansible\splunk_server\
+    paths: c:\ansible\splunk_apps\
   register: splunk_uf_app_list
 
 - name: Installing Splunk apps

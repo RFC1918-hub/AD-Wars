@@ -106,13 +106,13 @@
 
 - name: Copying Splunk app files to remote host
   copy:
-    src: ./files/splunk_server
+    src: ./files/splunk_server/splunk_apps
     dest: /opt/ansible/
   register: copy_splunkapps
 
 - name: Getting list of all app files on remote host
   find:
-    paths: /opt/ansible/splunk_server/
+    paths: /opt/ansible/splunk_apps/
   register: splunk_apps
 
 - name: Installing Splunk apps
@@ -120,6 +120,22 @@
     /opt/splunk/bin/splunk install app {{item.path}} -auth 'admin:{{splunk_admin_password}}'
   with_items: "{{splunk_apps.files}}"
   when: copy_splunkapps.changed
+
+- name: Creating local views folder
+  file:
+    path: /opt/splunk/etc/apps/search/local/data/ui/views
+    recurse: yes
+
+- name: Uploading logger dashboard
+  copy:
+    src: ./files/splunk_server/splunk_dashboards/logger_dashboard.xml
+    dest: /opt/splunk/etc/apps/search/local/data/ui/views/logger_dashboard.xml
+
+- name: Setting home dashboard
+  lineinfile:
+    path: /opt/splunk/etc/users/admin/user-prefs/local/user-prefs.conf
+    line: 'display.page.home.dashboardId = /servicesNS/nobody/search/data/ui/views/logger_dashboard'
+    insertbefore: EOF
 
 - name: Setup Splunk receiver on port 9997
   shell: 

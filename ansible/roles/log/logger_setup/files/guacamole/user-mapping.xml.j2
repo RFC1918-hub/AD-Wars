@@ -8,32 +8,32 @@
             <param name="password">{{ansible_password}}</param>
         </connection>
 
-        <connection name="DC01 - republic-dc - ansible">
+        <connection name="DC01 - republic-dc - r2d2">
             <protocol>rdp</protocol>
             <param name="hostname">192.168.56.10</param>
             <param name="port">3389</param>
-            <param name="username">{{ansible_user}}</param>
-            <param name="password">{{ansible_password}}</param>
+            <param name="username">{{local_admin_user}}</param>
+            <param name="password">{{local_admin_password}}</param>
             <param name="security">nla</param>
             <param name="ignore-cert">true</param>
         </connection>
 
-        <connection name="DC02 - security-dc - ansible">
+        <connection name="DC02 - security-dc - r2d2">
             <protocol>rdp</protocol>
             <param name="hostname">192.168.56.11</param>
             <param name="port">3389</param>
-            <param name="username">{{ansible_user}}</param>
-            <param name="password">{{ansible_password}}</param>
+            <param name="username">{{local_admin_user}}</param>
+            <param name="password">{{local_admin_password}}</param>
             <param name="security">nla</param>
             <param name="ignore-cert">true</param>
         </connection>
 
-        <connection name="SRV02 - jedi-archives - ansible">
+        <connection name="SRV02 - jedi-archives - r2d2">
             <protocol>rdp</protocol>
             <param name="hostname">192.168.56.22</param>
             <param name="port">3389</param>
-            <param name="username">{{ansible_user}}</param>
-            <param name="password">{{ansible_password}}</param>
+            <param name="username">{{local_admin_user}}</param>
+            <param name="password">{{local_admin_password}}</param>
             <param name="security">nla</param>
             <param name="ignore-cert">true</param>
         </connection>

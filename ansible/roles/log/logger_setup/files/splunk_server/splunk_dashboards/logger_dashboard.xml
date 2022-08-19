@@ -60,4 +60,36 @@
       </chart>
     </panel>
   </row>
+  <row>
+    <panel>
+      <title>PowerShell Transcripts Tags</title>
+      <chart>
+        <search>
+          <query>index=powershell sourcetype="powershell:transcript" runas_user!=ansible 
+| stats count by tag</query>
+          <earliest>$tk_globaltime.earliest$</earliest>
+          <latest>$tk_globaltime.latest$</latest>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Recent PowerShell Transcripts Preview</title>
+      <table>
+        <search>
+          <query>index=powershell sourcetype="powershell:transcript" runas_user!=ansible 
+| table _time, host, runas_user, _raw, sourcetype
+| sort -_time</query>
+          <earliest>$tk_globaltime.earliest$</earliest>
+          <latest>$tk_globaltime.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
 </dashboard>
